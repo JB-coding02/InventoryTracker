@@ -4,6 +4,7 @@ using InventoryTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409213955_TrackProducts")]
+    partial class TrackProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,67 +46,6 @@ namespace InventoryTracker.Data.Migrations
                     b.HasKey("ProductId");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("InventoryTracker.Models.ManufacturerAccount", b =>
-                {
-                    b.Property<int>("ManufacturerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ManufacturerId"));
-
-                    b.Property<string>("ManufacturerEmail")
-                        .IsRequired()
-                        .HasMaxLength(65)
-                        .HasColumnType("nvarchar(65)");
-
-                    b.Property<string>("ManufacturerName")
-                        .IsRequired()
-                        .HasMaxLength(75)
-                        .HasColumnType("nvarchar(75)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.HasKey("ManufacturerId");
-
-                    b.HasIndex("ManufacturerName")
-                        .IsUnique();
-
-                    b.ToTable("ManufacturerAccounts");
-                });
-
-            modelBuilder.Entity("InventoryTracker.Models.WholesalerAccount", b =>
-                {
-                    b.Property<int>("WholesalerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WholesalerId"));
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("WholesalerEmail")
-                        .IsRequired()
-                        .HasMaxLength(65)
-                        .HasColumnType("nvarchar(65)");
-
-                    b.Property<string>("WholesalerName")
-                        .IsRequired()
-                        .HasMaxLength(75)
-                        .HasColumnType("nvarchar(75)");
-
-                    b.HasKey("WholesalerId");
-
-                    b.HasIndex("WholesalerName")
-                        .IsUnique();
-
-                    b.ToTable("WholesalerAccounts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
