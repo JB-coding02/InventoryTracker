@@ -1,4 +1,7 @@
-﻿namespace InventoryTracker.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace InventoryTracker.Models;
 
 public class Product
 {
@@ -6,6 +9,7 @@ public class Product
     /// <summary>
     /// The unique primary key identifier for the product.
     /// </summary>
+    [Key]
     public int ProductId { get; set; }
 
     /// <summary>
@@ -15,7 +19,9 @@ public class Product
 
     /// <summary>
     /// The price of the product in US dollars.
+    /// Stored with two decimal places.
     /// </summary>
+    [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; }
 
     /// <summary>
