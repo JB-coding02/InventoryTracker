@@ -9,11 +9,7 @@ public class ApplicationDbContext : IdentityDbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
 
-        /// <summary>
-        /// This allows the DbContext to manage the Product table in the database, 
-        /// which shows all products that belong to a Manufacturer.
-        /// </summary>
-        public DbSet<Product> Products { get; set; }
+        
     }
 
 	/// <summary>
@@ -28,4 +24,10 @@ public class ApplicationDbContext : IdentityDbContext
 	/// in the database, which stores all registered wholesaler accounts.
 	/// </summary>
     public DbSet<WholesalerAccount> WholesalerAccounts { get; set; }
+
+	/// <summary>
+	/// This allows the DbContext to manage the Product table in the database, 
+	/// which shows all products that belong to a Manufacturer.
+	/// </summary>
+	public DbSet<Product> Products { get; set; }
 }

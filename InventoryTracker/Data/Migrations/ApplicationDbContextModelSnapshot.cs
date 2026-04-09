@@ -43,6 +43,8 @@ namespace InventoryTracker.Data.Migrations
                     b.HasKey("ProductId");
 
                     b.ToTable("Products");
+                });
+
             modelBuilder.Entity("InventoryTracker.Models.ManufacturerAccount", b =>
                 {
                     b.Property<int>("ManufacturerId")
