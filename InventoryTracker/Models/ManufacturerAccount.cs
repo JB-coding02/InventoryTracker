@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryTracker.Models;
 /// <summary>
-/// Reresents a single Account registered as a Manufacturer in the inventory tracking system.
+/// Represents a single Account registered as a Manufacturer in the inventory tracking system.
 /// </summary>
 [Index(nameof(ManufacturerName), IsUnique = true)]
 public class ManufacturerAccount

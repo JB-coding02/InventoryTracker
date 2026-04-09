@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryTracker.Models;
 /// <summary>
-/// Reresents a single Account registered as a Wholesaler in the inventory tracking system.
+/// Represents a single Account registered as a Wholesaler in the inventory tracking system.
 /// </summary>
 [PrimaryKey(nameof(WholesalerId))]
 [Index(nameof(WholesalerName), IsUnique = true)]
