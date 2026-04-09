@@ -17,4 +17,9 @@ public class Product
     /// The price of the product in US dollars.
     /// </summary>
     public decimal Price { get; set; }
+
+    /// <summary>
+    /// The quantity of the item that is currently in stock.
+    /// </summary>
+    public int StockQuantity { get; set; }
 }
