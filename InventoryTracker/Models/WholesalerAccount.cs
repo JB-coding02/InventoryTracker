@@ -26,12 +26,10 @@ public class WholesalerAccount
     public required string WholesalerName { get; set; }
 
     /// <summary>
-    /// User chosen password for securing each wholesaler account.
+    /// Hashed password for securing each wholesaler account.
     /// </summary>
     [Required]
-    [PasswordPropertyText(true)]
-    [StringLength(25, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 25 characters.")]
-    public required string Password { get; set; }
+    public required string PasswordHash { get; set; }
 
     /// <summary>
     /// Client-facing email address of the Wholesaler.

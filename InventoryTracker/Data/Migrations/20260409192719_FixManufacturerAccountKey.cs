@@ -32,7 +32,7 @@ namespace InventoryTracker.Data.Migrations
                     WholesalerId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     WholesalerName = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WholesalerEmail = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false)
                 },
                 constraints: table =>
