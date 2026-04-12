@@ -39,4 +39,9 @@ public class ManufacturerAccount
     [EmailAddress(ErrorMessage = "Invalid email address format.")]
     [StringLength(65, MinimumLength = 8, ErrorMessage = "Email must be between 8 and 65 characters.")]
     public required string ManufacturerEmail { get; set; }
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public ICollection<Product> Products { get; set; } = new List<Product>();
 }

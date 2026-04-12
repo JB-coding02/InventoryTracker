@@ -28,4 +28,13 @@ public class Product
     /// The quantity of the item that is currently in stock.
     /// </summary>
     public int StockQuantity { get; set; }
+
+	/// <summary>
+	/// Relationship to the ManufacturerAccount that produces this product.
+	/// </summary>
+	[Required]
+	public int ManufacturerId { get; set; }
+
+	[ForeignKey(nameof(ManufacturerId))]
+	public ManufacturerAccount? Manufacturer { get; set; }
 }
