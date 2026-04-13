@@ -35,6 +35,9 @@ public class Product
 	[Required]
 	public int ManufacturerId { get; set; }
 
+	/// <summary>
+	/// Navigation property to the ManufacturerAccount that produces this product.
+	/// </summary>
 	[ForeignKey(nameof(ManufacturerId))]
 	public ManufacturerAccount? Manufacturer { get; set; }
 }
