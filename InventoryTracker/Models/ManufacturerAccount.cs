@@ -33,10 +33,16 @@ public class ManufacturerAccount
     public required string Password { get; set; }
 
     /// <summary>
-    /// 
-    /// </summary>
+	/// The email of the manufacturer to contact.
+	/// </summary>
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email address format.")]
     [StringLength(65, MinimumLength = 8, ErrorMessage = "Email must be between 8 and 65 characters.")]
     public required string ManufacturerEmail { get; set; }
+
+	/// <summary>
+	/// The collection of products produced by this manufacturer to represent the one-to-many 
+	/// relationship between ManufacturerAccount and Product. One Manufacturer has many Products.
+	/// </summary>
+	public ICollection<Product> Products { get; set; } = new List<Product>();
 }
