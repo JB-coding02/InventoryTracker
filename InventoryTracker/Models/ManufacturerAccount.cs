@@ -7,7 +7,9 @@ namespace InventoryTracker.Models;
 /// <summary>
 /// Represents a single Account registered as a Manufacturer in the inventory tracking system.
 /// </summary>
+[PrimaryKey(nameof(ManufacturerId))]
 [Index(nameof(ManufacturerName), IsUnique = true)]
+[Index(nameof(ManufacturerEmail), IsUnique = true)]
 public class ManufacturerAccount
 {
     /// <summary>
@@ -25,12 +27,13 @@ public class ManufacturerAccount
     public required string ManufacturerName { get; set; }
 
     /// <summary>
-    /// The Password chosen by the manufacturer.
+    /// Links this manufacturer profile to the Identity user account.
     /// </summary>
-    [PasswordPropertyText(true)]
-    [StringLength(25, MinimumLength = 8, ErrorMessage = "Password must be between 8 and 25 characters.")]
-    
-    public required string Password { get; set; }
+    [Required]
+    public required string AppUserId { get; set; }
+
+    [ForeignKey(nameof(AppUserId))]
+    public ApplicationUser? AppUser { get; set; }
 
     /// <summary>
 	/// The email of the manufacturer to contact.
