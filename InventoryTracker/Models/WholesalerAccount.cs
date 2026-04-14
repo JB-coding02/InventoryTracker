@@ -9,6 +9,7 @@ namespace InventoryTracker.Models;
 /// </summary>
 [PrimaryKey(nameof(WholesalerId))]
 [Index(nameof(WholesalerName), IsUnique = true)]
+[Index(nameof(WholesalerEmail), IsUnique = true)]
 public class WholesalerAccount
 {
     /// <summary>
@@ -16,7 +17,8 @@ public class WholesalerAccount
     /// </summary>
     [Key]
     [ReadOnly(true)]
-    private int WholesalerId { get; set; }
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int WholesalerId { get; private set; }
 
     /// <summary>
     /// Client-facing name of the Wholesaler.
@@ -26,10 +28,13 @@ public class WholesalerAccount
     public required string WholesalerName { get; set; }
 
     /// <summary>
-    /// Hashed password for securing each wholesaler account.
+    /// Links this wholesaler profile to the Identity user account.
     /// </summary>
     [Required]
-    public required string PasswordHash { get; set; }
+    public required string AppUserId { get; set; }
+
+    [ForeignKey(nameof(AppUserId))]
+    public ApplicationUser? AppUser { get; set; }
 
     /// <summary>
     /// Client-facing email address of the Wholesaler.
