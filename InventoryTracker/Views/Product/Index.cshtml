@@ -1,3 +1,37 @@
-﻿@model Product
+﻿@model InventoryTracker.Models.Product
+
 @{
+    Layout = "_Layout";
 }
+
+<div class="container mt-4">
+    @if (Model == null)
+    {
+        <div class="alert alert-warning">Product not found.</div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">Product Details</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Name</dt>
+                    <dd class="col-sm-9">@Model.Name</dd>
+
+                    <dt class="col-sm-3">Price</dt>
+                    <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+
+                    <dt class="col-sm-3">Stock Quantity</dt>
+                    <dd class="col-sm-9">@Model.StockQuantity</dd>
+
+                    <dt class="col-sm-3">Manufacturer</dt>
+                    <dd class="col-sm-9">@(Model.Manufacturer?.ManufacturerName ?? "Unknown")</dd>
+                </dl>
+
+                <a asp-controller="Product" asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    }
+</div>

@@ -17,9 +17,12 @@ public class ProductController : Controller
 	public async Task<IActionResult> Index (int id)
 	{
 		Product? product = await _context.Products
-			.Where(p => p.ProductId == id)
-			.FirstOrDefaultAsync();
+			.Include(p => p.Manufacturer) // Eager load the related Manufacturer data
+			.FirstOrDefaultAsync(p => p.ProductId == id);
 
+		if (product == null) { 
+			return NotFound();
+		}
 		return View(product);
 	}
 
