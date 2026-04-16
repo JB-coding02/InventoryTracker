@@ -1,7 +1,7 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: "[FEATURE] - Your feature"
+name: Small-Scale Feature request
+about: Suggest a small-scale addition for the project
+title: "[FEATURE (Small-Scale)] - Your feature"
 labels: enhancement
 assignees: ''
 
