@@ -14,6 +14,13 @@ public class ProductController : Controller
 		_context = context;
 	}
 
+
+	/// <summary>
+	/// Displays the details view for the specified product.
+	/// </summary>
+	/// <param name="id">The unique identifier of the product to display.</param>
+	/// <returns>The task result contains an <see cref="IActionResult"/> that
+	/// renders the product details view if the product is found; otherwise, a NotFound result.</returns>
 	public async Task<IActionResult> Index (int id)
 	{
 		Product? product = await _context.Products
