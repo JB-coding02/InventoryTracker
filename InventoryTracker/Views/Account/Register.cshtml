@@ -1,0 +1,106 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-3">Create an account</h3>
+
+                <form asp-controller="Account" asp-action="Register" method="post" novalidate id="registerForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="AccountType" class="form-label">Account type</label>
+                        <select asp-for="AccountType" class="form-select" id="accountTypeSelect" required>
+                            <option value="" selected="@(string.IsNullOrWhiteSpace(Model?.AccountType))" disabled>Select account type...</option>
+                            <option value="Manufacturer">Manufacturer</option>
+                            <option value="Wholesaler">Wholesaler</option>
+                        </select>
+                        <span asp-validation-for="AccountType" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label id="companyLabel" asp-for="CompanyName" class="form-label">Manufacturer name</label>
+                        <input asp-for="CompanyName" class="form-control" placeholder="Enter company name" />
+                        <span asp-validation-for="CompanyName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Company email</label>
+                        <input asp-for="Email" class="form-control" placeholder="name@company.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" class="form-control" />
+                        <div class="form-text">@Model.PasswordRequirements</div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirm password</label>
+                        <input asp-for="ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" id="registerButton" disabled>Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            const select = document.getElementById('accountTypeSelect');
+            const companyLabel = document.getElementById('companyLabel');
+            const registerButton = document.getElementById('registerButton');
+
+            const requiredFieldIds = [
+                'CompanyName',
+                'Email',
+                'Password',
+                'ConfirmPassword'
+            ];
+
+            function updateLabel() {
+                if (!select || !companyLabel) return;
+                companyLabel.textContent = select.value === 'Wholesaler' ? 'Wholesaler name' : 'Manufacturer name';
+            }
+
+            function updateButtonState() {
+                if (!select || !registerButton) return;
+
+                const accountTypeSelected = !!select.value;
+                const allFieldsFilled = requiredFieldIds.every((id) => {
+                    const field = document.getElementById(id);
+                    return field && field.value.trim().length > 0;
+                });
+
+                registerButton.disabled = !(accountTypeSelected && allFieldsFilled);
+            }
+
+            select?.addEventListener('change', () => {
+                updateLabel();
+                updateButtonState();
+            });
+
+            requiredFieldIds.forEach((id) => {
+                const field = document.getElementById(id);
+                field?.addEventListener('input', updateButtonState);
+            });
+
+            updateLabel();
+            updateButtonState();
+        })();
+    </script>
+}
