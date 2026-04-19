@@ -45,6 +45,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 			.HasOne(w => w.AppUser)
 			.WithOne(u => u.WholesalerProfile)
 			.HasForeignKey<WholesalerAccount>(w => w.AppUserId)
-			.OnDelete(DeleteBehavior.Cascade);
+			.OnDelete(DeleteBehavior.NoAction);
 	}
 }
