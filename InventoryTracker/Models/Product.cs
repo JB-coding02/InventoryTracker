@@ -57,13 +57,11 @@ public class Product
 	/// <summary>
 	/// Relationship to the WholesalerAccount that sells this product.
 	/// </summary>
-	[Required]
-	public int WholesalerId { get; set; }
+	public int? WholesalerId { get; set; }
 
 	/// <summary>
 	/// Navigaion property of the collection of WholesalerAccounts that sell this product.
 	/// </summary>
-	[Required]
 	[ForeignKey(nameof(WholesalerId))]
 	public WholesalerAccount? Wholesaler { get; set; }
 }
