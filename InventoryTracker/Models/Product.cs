@@ -42,6 +42,11 @@ public class Product
 	public int StockQuantity { get; set; }
 
 	/// <summary>
+	/// The file path to the associated image of the product, if any.
+	/// </summary>
+	public string? ImagePath { get; set; }
+
+	/// <summary>
 	/// Relationship to the ManufacturerAccount that produces this product.
 	/// </summary>
 	[Required]
