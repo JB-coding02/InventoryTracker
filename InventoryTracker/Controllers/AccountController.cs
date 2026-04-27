@@ -10,7 +10,9 @@ namespace InventoryTracker.Controllers;
 [AllowAnonymous]
 public class AccountController : Controller
 {
-    private readonly UserManager<ApplicationUser> _userManager;
+
+	// Dependencies are injected via constructor injection
+	private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
 	private readonly RoleManager<IdentityRole> _roleManager;
 	private readonly ApplicationDbContext _db;
@@ -165,9 +167,20 @@ public class AccountController : Controller
             return View(model);
         }
 
-		
+		// Ensure the necessary roles exist
+		if (!await _roleManager.RoleExistsAsync("Manufacturer"))
+		{
+			await _roleManager.CreateAsync(new IdentityRole("Manufacturer"));
+		}
+		if (!await _roleManager.RoleExistsAsync("Wholesaler"))
+		{
+			await _roleManager.CreateAsync(new IdentityRole("Wholesaler"));
+		}
 
-        try
+		// Assign the user to the appropriate role based on their selected account type
+		await _userManager.AddToRoleAsync(user, model.AccountType);
+
+			try
         {
             if (model.AccountType == "Manufacturer")
             {
