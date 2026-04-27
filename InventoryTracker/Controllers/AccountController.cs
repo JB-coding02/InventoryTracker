@@ -12,15 +12,18 @@ public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly ApplicationDbContext _db;
+	private readonly RoleManager<IdentityRole> _roleManager;
+	private readonly ApplicationDbContext _db;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
+		RoleManager<IdentityRole> roleManager,
         ApplicationDbContext db)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+		_roleManager = roleManager;
         _db = db;
     }
 
@@ -161,6 +164,8 @@ public class AccountController : Controller
 
             return View(model);
         }
+
+		
 
         try
         {
