@@ -167,46 +167,49 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // Ensure the necessary roles exist
-        if (!await _roleManager.RoleExistsAsync("Manufacturer"))
+        // Assigns the user to the role, creating it first if it does not yet exist.
+        // Handles the race condition where two concurrent registrations may both try to
+        // create the same role simultaneously by treating DuplicateRoleName as non-fatal.
+        async Task<IdentityResult> EnsureUserInRoleAsync(ApplicationUser applicationUser, string roleName)
         {
-            var manufacturerRoleResult = await _roleManager.CreateAsync(new IdentityRole("Manufacturer"));
-            if (!manufacturerRoleResult.Succeeded)
+            var addToRoleResult = await _userManager.AddToRoleAsync(applicationUser, roleName);
+            if (addToRoleResult.Succeeded)
             {
-                foreach (var err in manufacturerRoleResult.Errors)
+                return addToRoleResult;
+            }
+
+            var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
+            if (!createRoleResult.Succeeded)
+            {
+                var hasOnlyDuplicateRoleNameError = true;
+                foreach (var error in createRoleResult.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, err.Description);
+                    if (!string.Equals(error.Code, "DuplicateRoleName", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasOnlyDuplicateRoleNameError = false;
+                        break;
+                    }
                 }
 
-                await _userManager.DeleteAsync(user);
-                return View(model);
-            }
-        }
-        if (!await _roleManager.RoleExistsAsync("Wholesaler"))
-        {
-            var wholesalerRoleResult = await _roleManager.CreateAsync(new IdentityRole("Wholesaler"));
-            if (!wholesalerRoleResult.Succeeded)
-            {
-                foreach (var err in wholesalerRoleResult.Errors)
+                if (!hasOnlyDuplicateRoleNameError)
                 {
-                    ModelState.AddModelError(string.Empty, err.Description);
+                    return createRoleResult;
                 }
-
-                await _userManager.DeleteAsync(user);
-                return View(model);
             }
+
+            return await _userManager.AddToRoleAsync(applicationUser, roleName);
         }
 
         // Assign the user to the appropriate role based on their selected account type
-        var addToRoleResult = await _userManager.AddToRoleAsync(user, model.AccountType);
-        if (!addToRoleResult.Succeeded)
+        var addUserToRoleResult = await EnsureUserInRoleAsync(user, model.AccountType);
+        if (!addUserToRoleResult.Succeeded)
         {
-            foreach (var err in addToRoleResult.Errors)
+            await _userManager.DeleteAsync(user);
+            foreach (var err in addUserToRoleResult.Errors)
             {
                 ModelState.AddModelError(string.Empty, err.Description);
             }
 
-            await _userManager.DeleteAsync(user);
             return View(model);
         }
 
