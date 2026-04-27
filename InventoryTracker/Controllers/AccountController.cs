@@ -204,12 +204,12 @@ public class AccountController : Controller
         var addUserToRoleResult = await EnsureUserInRoleAsync(user, model.AccountType);
         if (!addUserToRoleResult.Succeeded)
         {
-            await _userManager.DeleteAsync(user);
             foreach (var err in addUserToRoleResult.Errors)
             {
                 ModelState.AddModelError(string.Empty, err.Description);
             }
 
+            await _userManager.DeleteAsync(user);
             return View(model);
         }
 
