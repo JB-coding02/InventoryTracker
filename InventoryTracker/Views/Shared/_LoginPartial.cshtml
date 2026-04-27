@@ -3,10 +3,6 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-@{
-    string? returnUrl = Url.Content("~/");
-}
-
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
@@ -22,7 +18,7 @@
               method="post"
               asp-area="Identity"
               asp-page="/Account/Logout"
-              asp-route-returnUrl="@returnUrl">
+              asp-route-returnUrl="@Url.Content("~/")">
             <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
         </form>
     </li>
