@@ -167,20 +167,50 @@ public class AccountController : Controller
             return View(model);
         }
 
-		// Ensure the necessary roles exist
-		if (!await _roleManager.RoleExistsAsync("Manufacturer"))
-		{
-			await _roleManager.CreateAsync(new IdentityRole("Manufacturer"));
-		}
-		if (!await _roleManager.RoleExistsAsync("Wholesaler"))
-		{
-			await _roleManager.CreateAsync(new IdentityRole("Wholesaler"));
-		}
+        // Ensure the necessary roles exist
+        if (!await _roleManager.RoleExistsAsync("Manufacturer"))
+        {
+            var manufacturerRoleResult = await _roleManager.CreateAsync(new IdentityRole("Manufacturer"));
+            if (!manufacturerRoleResult.Succeeded)
+            {
+                foreach (var err in manufacturerRoleResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, err.Description);
+                }
 
-		// Assign the user to the appropriate role based on their selected account type
-		await _userManager.AddToRoleAsync(user, model.AccountType);
+                await _userManager.DeleteAsync(user);
+                return View(model);
+            }
+        }
+        if (!await _roleManager.RoleExistsAsync("Wholesaler"))
+        {
+            var wholesalerRoleResult = await _roleManager.CreateAsync(new IdentityRole("Wholesaler"));
+            if (!wholesalerRoleResult.Succeeded)
+            {
+                foreach (var err in wholesalerRoleResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, err.Description);
+                }
 
-			try
+                await _userManager.DeleteAsync(user);
+                return View(model);
+            }
+        }
+
+        // Assign the user to the appropriate role based on their selected account type
+        var addToRoleResult = await _userManager.AddToRoleAsync(user, model.AccountType);
+        if (!addToRoleResult.Succeeded)
+        {
+            foreach (var err in addToRoleResult.Errors)
+            {
+                ModelState.AddModelError(string.Empty, err.Description);
+            }
+
+            await _userManager.DeleteAsync(user);
+            return View(model);
+        }
+
+        try
         {
             if (model.AccountType == "Manufacturer")
             {
