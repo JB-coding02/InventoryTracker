@@ -59,8 +59,17 @@ public class AccountController : Controller
             return View(model);
         }
 
+        // Find user by email first
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return View(model);
+        }
+
+        // Sign in using the user's actual username (not email)
         var result = await _signInManager.PasswordSignInAsync(
-            model.Email,
+            user.UserName ?? model.Email,
             model.Password,
             model.RememberMe,
             lockoutOnFailure: false);
@@ -244,6 +253,26 @@ public class AccountController : Controller
         }
 
         await _signInManager.SignInAsync(user, isPersistent: false);
+        return RedirectToAction("Index", "Home");
+    }
+
+    /// <summary>
+    /// Logs out the currently signed-in user.
+    /// </summary>
+    /// <param name="returnUrl">Optional local URL to redirect to after logout.</param>
+    /// <returns>A redirect to the home page or the specified return URL.</returns>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> Logout(string? returnUrl = null)
+    {
+        await _signInManager.SignOutAsync();
+
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
         return RedirectToAction("Index", "Home");
     }
 }

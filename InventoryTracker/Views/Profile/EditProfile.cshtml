@@ -1,0 +1,82 @@
+@model InventoryTracker.Models.EditProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h2>Edit Profile</h2>
+        <hr />
+
+        @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="UserRole" class="form-label"></label>
+                <select asp-for="UserRole" class="form-select">
+                    <option value="@UserRole.Manufacturer">Manufacturer</option>
+                    <option value="@UserRole.Wholesaler">Wholesaler</option>
+                    @if (ViewBag.IsAdmin == true)
+                    {
+                        <option value="@UserRole.Admin">Admin</option>
+                    }
+                </select>
+                <span asp-validation-for="UserRole" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="Optional" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                <small class="text-muted">Leave blank if you don't want to provide a phone number</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CompanyName" class="form-label"></label>
+                <input asp-for="CompanyName" class="form-control" placeholder="Optional" />
+                <span asp-validation-for="CompanyName" class="text-danger"></span>
+                <small class="text-muted">Leave blank if you don't want to provide a company name</small>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="@Url.Action("Index", "Profile")" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+
+        <div class="mt-5 p-3 border border-danger rounded" style="border-color: #dc3545 !important;">
+            <h5 class="text-danger">Danger Zone</h5>
+            <p class="text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+            <form method="post" asp-action="DeleteAccount" asp-controller="Profile" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                <button type="submit" class="btn btn-danger">Delete Account</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
