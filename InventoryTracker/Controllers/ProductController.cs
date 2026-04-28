@@ -33,5 +33,10 @@ public class ProductController : Controller
 		return View(product);
 	}
 
+	[HttpGet]
+	public async Task<IActionResult> AddProduct()
+	{
+		return View();
+	}
 
 }
