@@ -13,4 +13,14 @@ public class EditProfileViewModel
     [StringLength(20, ErrorMessage = "Phone number cannot exceed 20 characters")]
     [Display(Name = "Phone Number")]
     public string? PhoneNumber { get; set; }
+
+    [StringLength(256, ErrorMessage = "Company name cannot exceed 256 characters")]
+    [Display(Name = "Company Name")]
+    public string? CompanyName { get; set; }
+
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+    [StringLength(256, ErrorMessage = "Email cannot exceed 256 characters")]
+    [Display(Name = "Email")]
+    public required string Email { get; set; }
 }
