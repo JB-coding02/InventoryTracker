@@ -195,4 +195,24 @@ public class AccountController : Controller
         await _signInManager.SignInAsync(user, isPersistent: false);
         return RedirectToAction("Index", "Home");
     }
+
+    /// <summary>
+    /// Logs out the currently signed-in user.
+    /// </summary>
+    /// <param name="returnUrl">Optional local URL to redirect to after logout.</param>
+    /// <returns>A redirect to the home page or the specified return URL.</returns>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> Logout(string? returnUrl = null)
+    {
+        await _signInManager.SignOutAsync();
+
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
+        return RedirectToAction("Index", "Home");
+    }
 }

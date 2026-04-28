@@ -1,0 +1,106 @@
+@model InventoryTracker.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2>My Profile</h2>
+        <hr />
+
+        @if (!string.IsNullOrEmpty(TempData["SuccessMessage"]?.ToString()))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Username:</strong>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.UserName
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="@Url.Action("EditProfile", "Profile")">Edit</a>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-md-9">
+                        @Model.Email
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <strong>Phone:</strong>
+                    </div>
+                    <div class="col-md-6">
+                        @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not provided" : Model.PhoneNumber)
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="@Url.Action("EditProfile", "Profile")">Edit</a>
+                    </div>
+                </div>
+
+                @if (Model.ManufacturerProfile != null)
+                {
+                    <hr />
+                    <h5>Manufacturer Profile</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Company Name:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            @Model.ManufacturerProfile.ManufacturerName
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Email:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            @Model.ManufacturerProfile.ManufacturerEmail
+                        </div>
+                    </div>
+                }
+
+                @if (Model.WholesalerProfile != null)
+                {
+                    <hr />
+                    <h5>Wholesaler Profile</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Company Name:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            @Model.WholesalerProfile.WholesalerName
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Email:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            @Model.WholesalerProfile.WholesalerEmail
+                        </div>
+                    </div>
+                }
+
+                <hr />
+                <div class="form-group">
+                    <a class="btn btn-primary" href="@Url.Action("Index", "Home")">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
