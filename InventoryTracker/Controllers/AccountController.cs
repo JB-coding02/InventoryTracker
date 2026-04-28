@@ -54,8 +54,17 @@ public class AccountController : Controller
             return View(model);
         }
 
+        // Find user by email first
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return View(model);
+        }
+
+        // Sign in using the user's actual username (not email)
         var result = await _signInManager.PasswordSignInAsync(
-            model.Email,
+            user.UserName ?? model.Email,
             model.Password,
             model.RememberMe,
             lockoutOnFailure: false);

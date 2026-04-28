@@ -39,8 +39,11 @@ namespace InventoryTracker.Controllers
                 UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
                 PhoneNumber = user.PhoneNumber,
-                CompanyName = user.CompanyName
+                CompanyName = user.CompanyName,
+                UserRole = user.UserRole
             };
+
+            ViewBag.IsAdmin = user.UserRole == UserRole.Admin;
 
             return View(model);
         }
@@ -58,6 +61,13 @@ namespace InventoryTracker.Controllers
             if (user == null)
             {
                 return Redirect("/Identity/Account/Login");
+            }
+
+            // Prevent non-admin users from changing their role to Admin
+            if (user.UserRole != UserRole.Admin && model.UserRole == UserRole.Admin)
+            {
+                ModelState.AddModelError("UserRole", "You cannot assign yourself an Admin role.");
+                return View(model);
             }
 
             // Update username if it has changed
@@ -86,9 +96,10 @@ namespace InventoryTracker.Controllers
                 user.Email = model.Email;
             }
 
-            // Update phone number and company name
+            // Update phone number, company name, and user role
             user.PhoneNumber = model.PhoneNumber;
             user.CompanyName = model.CompanyName;
+            user.UserRole = model.UserRole;
 
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)

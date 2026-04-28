@@ -23,4 +23,8 @@ public class EditProfileViewModel
     [StringLength(256, ErrorMessage = "Email cannot exceed 256 characters")]
     [Display(Name = "Email")]
     public required string Email { get; set; }
+
+    [Required(ErrorMessage = "User role is required")]
+    [Display(Name = "User Role")]
+    public UserRole UserRole { get; set; } = UserRole.Manufacturer;
 }

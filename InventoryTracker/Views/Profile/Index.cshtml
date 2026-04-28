@@ -42,6 +42,18 @@
 
                 <div class="row mb-3">
                     <div class="col-md-3">
+                        <strong>User Role:</strong>
+                    </div>
+                    <div class="col-md-6">
+                        @Model.UserRole.ToString()
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <a class="btn btn-sm btn-outline-primary" href="@Url.Action("EditProfile", "Profile")">Edit</a>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-3">
                         <strong>Phone:</strong>
                     </div>
                     <div class="col-md-6">

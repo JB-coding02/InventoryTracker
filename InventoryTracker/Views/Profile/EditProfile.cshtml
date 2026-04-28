@@ -33,6 +33,19 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="UserRole" class="form-label"></label>
+                <select asp-for="UserRole" class="form-select">
+                    <option value="@UserRole.Manufacturer">Manufacturer</option>
+                    <option value="@UserRole.Wholesaler">Wholesaler</option>
+                    @if (ViewBag.IsAdmin == true)
+                    {
+                        <option value="@UserRole.Admin">Admin</option>
+                    }
+                </select>
+                <span asp-validation-for="UserRole" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="PhoneNumber" class="form-label"></label>
                 <input asp-for="PhoneNumber" class="form-control" placeholder="Optional" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
