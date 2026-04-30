@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,23 +28,33 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        @if (User.Identity?.IsAuthenticated == true && User.Identity is ApplicationUser appUser)
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
-                            @if (appUser.UserAccountProfile != null && (appUser.UserAccountProfile.AccountRole == UserRole.Wholesaler || appUser.UserRole == UserRole.Admin))
+                            ApplicationUser? appUser = await UserManager.GetUserAsync(User);
+                            @if (appUser != null)
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
-                                </li>
+                                @if (appUser.UserRole == UserRole.Admin)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="All">All Products</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">All Orders</a>
+                                    </li>
+                                }
+                                @if (appUser.UserAccountProfile != null && appUser.UserAccountProfile.AccountRole == UserRole.Wholesaler)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
+                                    </li>
+                                }
+                                @if (appUser.UserAccountProfile != null && appUser.UserAccountProfile.AccountRole == UserRole.Manufacturer)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Inventory" asp-action="Index">My Inventory</a>
+                                    </li>
+                                }
                             }
-                            @if (appUser.UserAccountProfile != null && (appUser.UserAccountProfile.AccountRole == UserRole.Manufacturer || appUser.UserRole == UserRole.Admin))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Inventory" asp-action="Index">My Inventory</a>
-                                </li>
-                            }
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index">My Profile</a>
-                            </li>
                         }
                     </ul>
                     <partial name="_LoginPartial" />

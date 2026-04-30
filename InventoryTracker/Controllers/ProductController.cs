@@ -1,5 +1,6 @@
 ﻿using InventoryTracker.Data;
 using InventoryTracker.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +32,22 @@ public class ProductController : Controller
 			return NotFound();
 		}
 		return View(product);
+	}
+
+	/// <summary>
+	/// Displays all products in the system (Admin only).
+	/// </summary>
+	/// <returns>The task result contains an <see cref="IActionResult"/> that
+	/// renders the all products view with a list of all products.</returns>
+	[Authorize]
+	public async Task<IActionResult> All()
+	{
+		List<Product> allProducts = await _context.Products
+			.Include(p => p.UserAccount) // Eager load the related UserAccount data
+			.OrderBy(p => p.Name)
+			.ToListAsync();
+
+		return View(allProducts);
 	}
 
 

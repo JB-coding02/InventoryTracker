@@ -37,6 +37,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	/// </summary>
 	public DbSet<Product> Products { get; set; }
 
+	/// <summary>
+	/// This allows the DbContext to manage the Order table in the database,
+	/// which stores all orders between Wholesalers and Manufacturers.
+	/// </summary>
+	public DbSet<Order> Orders { get; set; }
+
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
 		base.OnModelCreating(builder);
@@ -52,5 +58,23 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 			.WithMany(u => u.Products)
 			.HasForeignKey(p => p.UserAccountId)
 			.OnDelete(DeleteBehavior.Cascade);
+
+		builder.Entity<Order>()
+			.HasOne(o => o.Wholesaler)
+			.WithMany()
+			.HasForeignKey(o => o.WholesalerId)
+			.OnDelete(DeleteBehavior.Restrict);
+
+		builder.Entity<Order>()
+			.HasOne(o => o.Manufacturer)
+			.WithMany()
+			.HasForeignKey(o => o.ManufacturerId)
+			.OnDelete(DeleteBehavior.Restrict);
+
+		builder.Entity<Order>()
+			.HasOne(o => o.Product)
+			.WithMany()
+			.HasForeignKey(o => o.ProductId)
+			.OnDelete(DeleteBehavior.Restrict);
 	}
 }
