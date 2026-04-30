@@ -28,13 +28,13 @@
                         </li>
                         @if (User.Identity?.IsAuthenticated == true && User.Identity is ApplicationUser appUser)
                         {
-                            @if (appUser.UserAccountProfile != null && appUser.UserAccountProfile.AccountRole == UserRole.Wholesaler)
+                            @if (appUser.UserAccountProfile != null && (appUser.UserAccountProfile.AccountRole == UserRole.Wholesaler || appUser.UserRole == UserRole.Admin))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
                                 </li>
                             }
-                            @if (appUser.UserAccountProfile != null && appUser.UserAccountProfile.AccountRole == UserRole.Manufacturer)
+                            @if (appUser.UserAccountProfile != null && (appUser.UserAccountProfile.AccountRole == UserRole.Manufacturer || appUser.UserRole == UserRole.Admin))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Inventory" asp-action="Index">My Inventory</a>

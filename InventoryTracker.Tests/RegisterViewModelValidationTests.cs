@@ -9,7 +9,7 @@ public class RegisterViewModelValidationTests
     [Fact]
     public void ValidModel_PassesValidation()
     {
-        var model = new RegisterViewModel
+        RegisterViewModel model = new RegisterViewModel
         {
             AccountType = "Manufacturer",
             CompanyName = "Valid Company",
@@ -18,7 +18,7 @@ public class RegisterViewModelValidationTests
             ConfirmPassword = "Valid123!"
         };
 
-        var results = Validate(model);
+        List<ValidationResult> results = Validate(model);
 
         Assert.Empty(results);
     }
@@ -26,7 +26,7 @@ public class RegisterViewModelValidationTests
     [Fact]
     public void InvalidAccountType_FailsValidation()
     {
-        var model = new RegisterViewModel
+        RegisterViewModel model = new RegisterViewModel
         {
             AccountType = "Retailer",
             CompanyName = "Valid Company",
@@ -35,7 +35,7 @@ public class RegisterViewModelValidationTests
             ConfirmPassword = "Valid123!"
         };
 
-        var results = Validate(model);
+        List<ValidationResult> results = Validate(model);
 
         Assert.Contains(results, r => r.MemberNames.Contains(nameof(RegisterViewModel.AccountType)));
     }
@@ -43,7 +43,7 @@ public class RegisterViewModelValidationTests
     [Fact]
     public void MismatchedPasswords_FailsValidation()
     {
-        var model = new RegisterViewModel
+        RegisterViewModel model = new RegisterViewModel
         {
             AccountType = "Wholesaler",
             CompanyName = "Valid Company",
@@ -52,15 +52,15 @@ public class RegisterViewModelValidationTests
             ConfirmPassword = "Different123!"
         };
 
-        var results = Validate(model);
+        List<ValidationResult> results = Validate(model);
 
         Assert.Contains(results, r => r.MemberNames.Contains(nameof(RegisterViewModel.ConfirmPassword)));
     }
 
     private static List<ValidationResult> Validate(RegisterViewModel model)
     {
-        var context = new ValidationContext(model);
-        var results = new List<ValidationResult>();
+        ValidationContext context = new ValidationContext(model);
+        List<ValidationResult> results = new List<ValidationResult>();
         Validator.TryValidateObject(model, context, results, validateAllProperties: true);
         return results;
     }

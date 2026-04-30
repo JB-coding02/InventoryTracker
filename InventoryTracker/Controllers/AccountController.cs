@@ -8,33 +8,25 @@ using Microsoft.EntityFrameworkCore;
 namespace InventoryTracker.Controllers;
 
 [AllowAnonymous]
-public class AccountController : Controller
+public class AccountController (
+	UserManager<ApplicationUser> userManager,
+	SignInManager<ApplicationUser> signInManager,
+		RoleManager<IdentityRole> roleManager,
+	ApplicationDbContext db) : Controller
 {
 
 	// Dependencies are injected via constructor injection
-	private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-	private readonly RoleManager<IdentityRole> _roleManager;
-	private readonly ApplicationDbContext _db;
+	private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
+	private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+	private readonly ApplicationDbContext _db = db;
 
-    public AccountController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-		RoleManager<IdentityRole> roleManager,
-        ApplicationDbContext db)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-		_roleManager = roleManager;
-        _db = db;
-    }
-
-    /// <summary>
-    /// Displays the login form.
-    /// </summary>
-    /// <param name="returnUrl">Optional local URL to redirect to after successful authentication.</param>
-    /// <returns>The login view.</returns>
-    [HttpGet]
+	/// <summary>
+	/// Displays the login form.
+	/// </summary>
+	/// <param name="returnUrl">Optional local URL to redirect to after successful authentication.</param>
+	/// <returns>The login view.</returns>
+	[HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
         if (User.Identity?.IsAuthenticated == true)
@@ -254,7 +246,6 @@ public class AccountController : Controller
     /// <returns>A redirect to the home page or the specified return URL.</returns>
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize]
     public async Task<IActionResult> Logout(string? returnUrl = null)
     {
         await _signInManager.SignOutAsync();
