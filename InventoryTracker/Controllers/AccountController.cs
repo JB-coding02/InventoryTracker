@@ -60,7 +60,7 @@ public class AccountController : Controller
         }
 
         // Find user by email first
-        var user = await _userManager.FindByEmailAsync(model.Email);
+        ApplicationUser? user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
         {
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
@@ -68,7 +68,7 @@ public class AccountController : Controller
         }
 
         // Sign in using the user's actual username (not email)
-        var result = await _signInManager.PasswordSignInAsync(
+        Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(
             user.UserName ?? model.Email,
             model.Password,
             model.RememberMe,
@@ -126,13 +126,13 @@ public class AccountController : Controller
 
         if (model.AccountType == "Manufacturer")
         {
-            if (await _db.ManufacturerAccounts.AnyAsync(m => m.ManufacturerName == model.CompanyName))
+            if (await _db.UserAccounts.AnyAsync(u => u.AccountName == model.CompanyName && u.AccountRole == UserRole.Manufacturer))
             {
                 ModelState.AddModelError(nameof(model.CompanyName), "A manufacturer with this name already exists.");
                 return View(model);
             }
 
-            if (await _db.ManufacturerAccounts.AnyAsync(m => m.ManufacturerEmail == model.Email))
+            if (await _db.UserAccounts.AnyAsync(u => u.AccountEmail == model.Email && u.AccountRole == UserRole.Manufacturer))
             {
                 ModelState.AddModelError(nameof(model.Email), "A manufacturer with this email already exists.");
                 return View(model);
@@ -140,13 +140,13 @@ public class AccountController : Controller
         }
         else if (model.AccountType == "Wholesaler")
         {
-            if (await _db.WholesalerAccounts.AnyAsync(w => w.WholesalerName == model.CompanyName))
+            if (await _db.UserAccounts.AnyAsync(u => u.AccountName == model.CompanyName && u.AccountRole == UserRole.Wholesaler))
             {
                 ModelState.AddModelError(nameof(model.CompanyName), "A wholesaler with this name already exists.");
                 return View(model);
             }
 
-            if (await _db.WholesalerAccounts.AnyAsync(w => w.WholesalerEmail == model.Email))
+            if (await _db.UserAccounts.AnyAsync(u => u.AccountEmail == model.Email && u.AccountRole == UserRole.Wholesaler))
             {
                 ModelState.AddModelError(nameof(model.Email), "A wholesaler with this email already exists.");
                 return View(model);
@@ -165,10 +165,10 @@ public class AccountController : Controller
             EmailConfirmed = true
         };
 
-        var result = await _userManager.CreateAsync(user, model.Password);
+        IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
         {
-            foreach (var err in result.Errors)
+            foreach (IdentityError err in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, err.Description);
             }
@@ -187,11 +187,11 @@ public class AccountController : Controller
                 return addToRoleResult;
             }
 
-            var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
+            IdentityResult createRoleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
             if (!createRoleResult.Succeeded)
             {
-                var hasOnlyDuplicateRoleNameError = true;
-                foreach (var error in createRoleResult.Errors)
+                bool hasOnlyDuplicateRoleNameError = true;
+                foreach (IdentityError error in createRoleResult.Errors)
                 {
                     if (!string.Equals(error.Code, "DuplicateRoleName", StringComparison.OrdinalIgnoreCase))
                     {
@@ -210,10 +210,10 @@ public class AccountController : Controller
         }
 
         // Assign the user to the appropriate role based on their selected account type
-        var addUserToRoleResult = await EnsureUserInRoleAsync(user, model.AccountType);
+        IdentityResult addUserToRoleResult = await EnsureUserInRoleAsync(user, model.AccountType);
         if (!addUserToRoleResult.Succeeded)
         {
-            foreach (var err in addUserToRoleResult.Errors)
+            foreach (IdentityError err in addUserToRoleResult.Errors)
             {
                 ModelState.AddModelError(string.Empty, err.Description);
             }
@@ -224,24 +224,15 @@ public class AccountController : Controller
 
         try
         {
-            if (model.AccountType == "Manufacturer")
+            UserRole userRole = model.AccountType == "Manufacturer" ? UserRole.Manufacturer : UserRole.Wholesaler;
+
+            _db.UserAccounts.Add(new UserAccount
             {
-                _db.ManufacturerAccounts.Add(new ManufacturerAccount
-                {
-                    ManufacturerName = model.CompanyName,
-                    ManufacturerEmail = model.Email,
-                    AppUserId = user.Id
-                });
-            }
-            else
-            {
-                _db.WholesalerAccounts.Add(new WholesalerAccount
-                {
-                    WholesalerName = model.CompanyName,
-                    WholesalerEmail = model.Email,
-                    AppUserId = user.Id
-                });
-            }
+                AccountName = model.CompanyName,
+                AccountEmail = model.Email,
+                AccountRole = userRole,
+                AppUserId = user.Id
+            });
 
             await _db.SaveChangesAsync();
         }

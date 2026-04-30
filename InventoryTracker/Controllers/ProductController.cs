@@ -24,7 +24,7 @@ public class ProductController : Controller
 	public async Task<IActionResult> Index (int id)
 	{
 		Product? product = await _context.Products
-			.Include(p => p.Manufacturer) // Eager load the related Manufacturer data
+			.Include(p => p.UserAccount) // Eager load the related UserAccount data
 			.FirstOrDefaultAsync(p => p.ProductId == id);
 
 		if (product == null) { 

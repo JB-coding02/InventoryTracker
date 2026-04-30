@@ -17,17 +17,23 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	/// ManufacturerAccounts table in the database,
 	/// which stores all registered manufacturer accounts.
 	/// </summary>
-    public DbSet<ManufacturerAccount> ManufacturerAccounts { get; set; }
+	public DbSet<ManufacturerAccount> ManufacturerAccounts { get; set; }
 
 	/// <summary>
 	/// This allows the DbContext to manage the WholesalerAccounts table
 	/// in the database, which stores all registered wholesaler accounts.
 	/// </summary>
-    public DbSet<WholesalerAccount> WholesalerAccounts { get; set; }
+	public DbSet<WholesalerAccount> WholesalerAccounts { get; set; }
+
+	/// <summary>
+	/// This allows the DbContext to manage the UserAccounts table in the database,
+	/// which stores unified manufacturer and wholesaler accounts.
+	/// </summary>
+	public DbSet<UserAccount> UserAccounts { get; set; }
 
 	/// <summary>
 	/// This allows the DbContext to manage the Product table in the database, 
-	/// which shows all products that belong to a Manufacturer.
+	/// which shows all products that belong to a UserAccount.
 	/// </summary>
 	public DbSet<Product> Products { get; set; }
 
@@ -35,16 +41,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	{
 		base.OnModelCreating(builder);
 
-		builder.Entity<ManufacturerAccount>()
-			.HasOne(m => m.AppUser)
-			.WithOne(u => u.ManufacturerProfile)
-			.HasForeignKey<ManufacturerAccount>(m => m.AppUserId)
+		builder.Entity<UserAccount>()
+			.HasOne(u => u.AppUser)
+			.WithOne(user => user.UserAccountProfile)
+			.HasForeignKey<UserAccount>(u => u.AppUserId)
 			.OnDelete(DeleteBehavior.Cascade);
 
-		builder.Entity<WholesalerAccount>()
-			.HasOne(w => w.AppUser)
-			.WithOne(u => u.WholesalerProfile)
-			.HasForeignKey<WholesalerAccount>(w => w.AppUserId)
-			.OnDelete(DeleteBehavior.NoAction);
+		builder.Entity<Product>()
+			.HasOne(p => p.UserAccount)
+			.WithMany(u => u.Products)
+			.HasForeignKey(p => p.UserAccountId)
+			.OnDelete(DeleteBehavior.Cascade);
 	}
 }
