@@ -6,11 +6,11 @@ namespace InventoryTracker.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
+	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+	{
 
-        
-    }
+
+	}
 
 	/// <summary>
 	/// This allows the DbContext to manage the

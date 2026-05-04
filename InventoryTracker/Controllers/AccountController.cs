@@ -10,17 +10,22 @@ namespace InventoryTracker.Controllers;
 [AllowAnonymous]
 public class AccountController : Controller
 {
-    private readonly UserManager<ApplicationUser> _userManager;
+
+	// Dependencies are injected via constructor injection
+	private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly ApplicationDbContext _db;
+	private readonly RoleManager<IdentityRole> _roleManager;
+	private readonly ApplicationDbContext _db;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
+		RoleManager<IdentityRole> roleManager,
         ApplicationDbContext db)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+		_roleManager = roleManager;
         _db = db;
     }
 
@@ -54,8 +59,17 @@ public class AccountController : Controller
             return View(model);
         }
 
+        // Find user by email first
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return View(model);
+        }
+
+        // Sign in using the user's actual username (not email)
         var result = await _signInManager.PasswordSignInAsync(
-            model.Email,
+            user.UserName ?? model.Email,
             model.Password,
             model.RememberMe,
             lockoutOnFailure: false);
@@ -162,6 +176,52 @@ public class AccountController : Controller
             return View(model);
         }
 
+        // Assigns the user to the role, creating it first if it does not yet exist.
+        // Handles the race condition where two concurrent registrations may both try to
+        // create the same role simultaneously by treating DuplicateRoleName as non-fatal.
+        async Task<IdentityResult> EnsureUserInRoleAsync(ApplicationUser applicationUser, string roleName)
+        {
+            var addToRoleResult = await _userManager.AddToRoleAsync(applicationUser, roleName);
+            if (addToRoleResult.Succeeded)
+            {
+                return addToRoleResult;
+            }
+
+            var createRoleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
+            if (!createRoleResult.Succeeded)
+            {
+                var hasOnlyDuplicateRoleNameError = true;
+                foreach (var error in createRoleResult.Errors)
+                {
+                    if (!string.Equals(error.Code, "DuplicateRoleName", StringComparison.OrdinalIgnoreCase))
+                    {
+                        hasOnlyDuplicateRoleNameError = false;
+                        break;
+                    }
+                }
+
+                if (!hasOnlyDuplicateRoleNameError)
+                {
+                    return createRoleResult;
+                }
+            }
+
+            return await _userManager.AddToRoleAsync(applicationUser, roleName);
+        }
+
+        // Assign the user to the appropriate role based on their selected account type
+        var addUserToRoleResult = await EnsureUserInRoleAsync(user, model.AccountType);
+        if (!addUserToRoleResult.Succeeded)
+        {
+            foreach (var err in addUserToRoleResult.Errors)
+            {
+                ModelState.AddModelError(string.Empty, err.Description);
+            }
+
+            await _userManager.DeleteAsync(user);
+            return View(model);
+        }
+
         try
         {
             if (model.AccountType == "Manufacturer")
@@ -193,6 +253,26 @@ public class AccountController : Controller
         }
 
         await _signInManager.SignInAsync(user, isPersistent: false);
+        return RedirectToAction("Index", "Home");
+    }
+
+    /// <summary>
+    /// Logs out the currently signed-in user.
+    /// </summary>
+    /// <param name="returnUrl">Optional local URL to redirect to after logout.</param>
+    /// <returns>A redirect to the home page or the specified return URL.</returns>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> Logout(string? returnUrl = null)
+    {
+        await _signInManager.SignOutAsync();
+
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
         return RedirectToAction("Index", "Home");
     }
 }
