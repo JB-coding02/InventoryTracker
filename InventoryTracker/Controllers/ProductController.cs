@@ -45,6 +45,32 @@ public class ProductController : Controller
 
 		return View(products);
 	}
+	/// <summary>
+	/// Displays the form to add a new product.
+	/// </summary>
+	[HttpGet]
+	public async Task<IActionResult> Add ()
+	{
+		ViewBag.Manufacturers = await _context.ManufacturerAccounts.ToListAsync();
+		return View();
+	}
+
+	/// <summary>
+	/// Handles the form submission to add a new product.
+	/// </summary>
+	[HttpPost]
+	public async Task<IActionResult> Add (Product product)
+	{
+		if (ModelState.IsValid)
+		{
+			_context.Products.Add(product);
+			await _context.SaveChangesAsync();
+			return RedirectToAction(nameof(List));
+		}
+
+		ViewBag.Manufacturers = await _context.ManufacturerAccounts.ToListAsync();
+		return View(product);
+	}
 
 
 }
