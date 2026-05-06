@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace InventoryTracker.Migrations;
 
 /// <inheritdoc />
-public partial class AddingBackMigrations : Migration
+public partial class Initial : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -315,7 +315,6 @@ public partial class AddingBackMigrations : Migration
             table: "UserAccounts",
             column: "AppUserId",
             unique: true);
-
     }
 
     /// <inheritdoc />
