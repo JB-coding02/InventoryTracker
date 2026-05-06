@@ -4,6 +4,7 @@ using InventoryTracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryTracker.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260506232926_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -444,11 +447,6 @@ namespace InventoryTracker.Migrations
             modelBuilder.Entity("InventoryTracker.Models.ApplicationUser", b =>
                 {
                     b.Navigation("UserAccountProfile");
-                });
-
-            modelBuilder.Entity("InventoryTracker.Models.ManufacturerAccount", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("InventoryTracker.Models.UserAccount", b =>
