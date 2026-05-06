@@ -16,13 +16,13 @@ public class OrdersController : Controller
     }
 
     /// <summary>
-    /// Displays all orders with search and filter capabilities (requires authentication).
+    /// Displays all orders with search and filter capabilities (admin only).
     /// </summary>
     /// <param name="searchTerm">Search term to filter orders by product name or ID.</param>
     /// <param name="wholesalerId">Filter orders by Wholesaler ID.</param>
     /// <param name="manufacturerId">Filter orders by Manufacturer ID.</param>
     /// <returns>Returns the All Orders view with filtered results.</returns>
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Index(string? searchTerm, int? wholesalerId, int? manufacturerId)
     {
         IQueryable<Order> ordersQuery = _context.Orders
