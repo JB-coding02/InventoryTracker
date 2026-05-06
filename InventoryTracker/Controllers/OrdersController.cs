@@ -40,7 +40,7 @@ public class OrdersController : Controller
             }
 
             ordersQuery = ordersQuery.Where(o =>
-                o.OrderId.ToString().Contains(searchTerm) ||
+                (orderId.HasValue && o.OrderId == orderId.Value) ||
                 o.Product!.Name.Contains(searchTerm) ||
                 o.Status.Contains(searchTerm));
         }
