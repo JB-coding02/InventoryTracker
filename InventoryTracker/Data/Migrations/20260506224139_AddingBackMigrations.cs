@@ -159,27 +159,6 @@ public partial class AddingBackMigrations : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "ManufacturerAccounts",
-            columns: table => new
-            {
-                ManufacturerId = table.Column<int>(type: "int", nullable: false)
-                    .Annotation("SqlServer:Identity", "1, 1"),
-                ManufacturerName = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
-                AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                ManufacturerEmail = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_ManufacturerAccounts", x => x.ManufacturerId);
-                table.ForeignKey(
-                    name: "FK_ManufacturerAccounts_AspNetUsers_AppUserId",
-                    column: x => x.AppUserId,
-                    principalTable: "AspNetUsers",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
             name: "UserAccounts",
             columns: table => new
             {
@@ -202,27 +181,6 @@ public partial class AddingBackMigrations : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "WholesalerAccounts",
-            columns: table => new
-            {
-                WholesalerId = table.Column<int>(type: "int", nullable: false)
-                    .Annotation("SqlServer:Identity", "1, 1"),
-                WholesalerName = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
-                AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                WholesalerEmail = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_WholesalerAccounts", x => x.WholesalerId);
-                table.ForeignKey(
-                    name: "FK_WholesalerAccounts_AspNetUsers_AppUserId",
-                    column: x => x.AppUserId,
-                    principalTable: "AspNetUsers",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
             name: "Products",
             columns: table => new
             {
@@ -232,17 +190,11 @@ public partial class AddingBackMigrations : Migration
                 Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                 StockQuantity = table.Column<int>(type: "int", nullable: false),
                 ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                UserAccountId = table.Column<int>(type: "int", nullable: false),
-                ManufacturerAccountManufacturerId = table.Column<int>(type: "int", nullable: true)
+                UserAccountId = table.Column<int>(type: "int", nullable: false)
             },
             constraints: table =>
             {
                 table.PrimaryKey("PK_Products", x => x.ProductId);
-                table.ForeignKey(
-                    name: "FK_Products_ManufacturerAccounts_ManufacturerAccountManufacturerId",
-                    column: x => x.ManufacturerAccountManufacturerId,
-                    principalTable: "ManufacturerAccounts",
-                    principalColumn: "ManufacturerId");
                 table.ForeignKey(
                     name: "FK_Products_UserAccounts_UserAccountId",
                     column: x => x.UserAccountId,
@@ -327,23 +279,6 @@ public partial class AddingBackMigrations : Migration
             filter: "[NormalizedUserName] IS NOT NULL");
 
         migrationBuilder.CreateIndex(
-            name: "IX_ManufacturerAccounts_AppUserId",
-            table: "ManufacturerAccounts",
-            column: "AppUserId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_ManufacturerAccounts_ManufacturerEmail",
-            table: "ManufacturerAccounts",
-            column: "ManufacturerEmail",
-            unique: true);
-
-        migrationBuilder.CreateIndex(
-            name: "IX_ManufacturerAccounts_ManufacturerName",
-            table: "ManufacturerAccounts",
-            column: "ManufacturerName",
-            unique: true);
-
-        migrationBuilder.CreateIndex(
             name: "IX_Orders_ManufacturerId",
             table: "Orders",
             column: "ManufacturerId");
@@ -357,11 +292,6 @@ public partial class AddingBackMigrations : Migration
             name: "IX_Orders_WholesalerId",
             table: "Orders",
             column: "WholesalerId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_Products_ManufacturerAccountManufacturerId",
-            table: "Products",
-            column: "ManufacturerAccountManufacturerId");
 
         migrationBuilder.CreateIndex(
             name: "IX_Products_UserAccountId",
@@ -386,22 +316,6 @@ public partial class AddingBackMigrations : Migration
             column: "AppUserId",
             unique: true);
 
-        migrationBuilder.CreateIndex(
-            name: "IX_WholesalerAccounts_AppUserId",
-            table: "WholesalerAccounts",
-            column: "AppUserId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_WholesalerAccounts_WholesalerEmail",
-            table: "WholesalerAccounts",
-            column: "WholesalerEmail",
-            unique: true);
-
-        migrationBuilder.CreateIndex(
-            name: "IX_WholesalerAccounts_WholesalerName",
-            table: "WholesalerAccounts",
-            column: "WholesalerName",
-            unique: true);
     }
 
     /// <inheritdoc />
@@ -426,16 +340,10 @@ public partial class AddingBackMigrations : Migration
             name: "Orders");
 
         migrationBuilder.DropTable(
-            name: "WholesalerAccounts");
-
-        migrationBuilder.DropTable(
             name: "AspNetRoles");
 
         migrationBuilder.DropTable(
             name: "Products");
-
-        migrationBuilder.DropTable(
-            name: "ManufacturerAccounts");
 
         migrationBuilder.DropTable(
             name: "UserAccounts");

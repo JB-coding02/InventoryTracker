@@ -13,19 +13,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 	}
 
 	/// <summary>
-	/// This allows the DbContext to manage the
-	/// ManufacturerAccounts table in the database,
-	/// which stores all registered manufacturer accounts.
-	/// </summary>
-	public DbSet<ManufacturerAccount> ManufacturerAccounts { get; set; }
-
-	/// <summary>
-	/// This allows the DbContext to manage the WholesalerAccounts table
-	/// in the database, which stores all registered wholesaler accounts.
-	/// </summary>
-	public DbSet<WholesalerAccount> WholesalerAccounts { get; set; }
-
-	/// <summary>
 	/// This allows the DbContext to manage the UserAccounts table in the database,
 	/// which stores unified manufacturer and wholesaler accounts.
 	/// </summary>

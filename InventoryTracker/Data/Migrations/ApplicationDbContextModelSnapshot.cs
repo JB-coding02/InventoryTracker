@@ -94,41 +94,6 @@ namespace InventoryTracker.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("InventoryTracker.Models.ManufacturerAccount", b =>
-                {
-                    b.Property<int>("ManufacturerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ManufacturerId"));
-
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ManufacturerEmail")
-                        .IsRequired()
-                        .HasMaxLength(65)
-                        .HasColumnType("nvarchar(65)");
-
-                    b.Property<string>("ManufacturerName")
-                        .IsRequired()
-                        .HasMaxLength(75)
-                        .HasColumnType("nvarchar(75)");
-
-                    b.HasKey("ManufacturerId");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("ManufacturerEmail")
-                        .IsUnique();
-
-                    b.HasIndex("ManufacturerName")
-                        .IsUnique();
-
-                    b.ToTable("ManufacturerAccounts");
-                });
-
             modelBuilder.Entity("InventoryTracker.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -179,9 +144,6 @@ namespace InventoryTracker.Migrations
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ManufacturerAccountManufacturerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -197,8 +159,6 @@ namespace InventoryTracker.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ProductId");
-
-                    b.HasIndex("ManufacturerAccountManufacturerId");
 
                     b.HasIndex("UserAccountId");
 
@@ -242,41 +202,6 @@ namespace InventoryTracker.Migrations
                         .IsUnique();
 
                     b.ToTable("UserAccounts");
-                });
-
-            modelBuilder.Entity("InventoryTracker.Models.WholesalerAccount", b =>
-                {
-                    b.Property<int>("WholesalerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WholesalerId"));
-
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("WholesalerEmail")
-                        .IsRequired()
-                        .HasMaxLength(65)
-                        .HasColumnType("nvarchar(65)");
-
-                    b.Property<string>("WholesalerName")
-                        .IsRequired()
-                        .HasMaxLength(75)
-                        .HasColumnType("nvarchar(75)");
-
-                    b.HasKey("WholesalerId");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("WholesalerEmail")
-                        .IsUnique();
-
-                    b.HasIndex("WholesalerName")
-                        .IsUnique();
-
-                    b.ToTable("WholesalerAccounts");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -416,17 +341,6 @@ namespace InventoryTracker.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("InventoryTracker.Models.ManufacturerAccount", b =>
-                {
-                    b.HasOne("InventoryTracker.Models.ApplicationUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-                });
-
             modelBuilder.Entity("InventoryTracker.Models.Order", b =>
                 {
                     b.HasOne("InventoryTracker.Models.UserAccount", "Manufacturer")
@@ -456,10 +370,6 @@ namespace InventoryTracker.Migrations
 
             modelBuilder.Entity("InventoryTracker.Models.Product", b =>
                 {
-                    b.HasOne("InventoryTracker.Models.ManufacturerAccount", null)
-                        .WithMany("Products")
-                        .HasForeignKey("ManufacturerAccountManufacturerId");
-
                     b.HasOne("InventoryTracker.Models.UserAccount", "UserAccount")
                         .WithMany("Products")
                         .HasForeignKey("UserAccountId")
@@ -474,17 +384,6 @@ namespace InventoryTracker.Migrations
                     b.HasOne("InventoryTracker.Models.ApplicationUser", "AppUser")
                         .WithOne("UserAccountProfile")
                         .HasForeignKey("InventoryTracker.Models.UserAccount", "AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-                });
-
-            modelBuilder.Entity("InventoryTracker.Models.WholesalerAccount", b =>
-                {
-                    b.HasOne("InventoryTracker.Models.ApplicationUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

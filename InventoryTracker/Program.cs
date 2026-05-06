@@ -23,9 +23,10 @@ builder.Services.AddRazorPages();
 
 WebApplication app = builder.Build();
 
-// Apply migrations
-using (IServiceScope scope = app.Services.CreateScope())
+// Apply migrations in development only; production should use explicit deployment migration steps.
+if (app.Environment.IsDevelopment())
 {
+    using IServiceScope scope = app.Services.CreateScope();
     ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync();
 }

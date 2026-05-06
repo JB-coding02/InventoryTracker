@@ -41,7 +41,7 @@ public class ProductController : Controller
 	public async Task<IActionResult> List ()
 	{
 		List<Product> products = await _context.Products
-			.Include(p => p.Manufacturer)
+			.Include(p => p.UserAccount)
 			.ToListAsync();
 
 		return View(products);
