@@ -64,16 +64,16 @@
                     </div>
                 </div>
 
-                @if (Model.ManufacturerProfile != null)
+                @if (Model.UserAccountProfile != null)
                 {
                     <hr />
-                    <h5>Manufacturer Profile</h5>
+                    <h5>@(Model.UserAccountProfile.AccountRole == UserRole.Manufacturer ? "Manufacturer Profile" : "Wholesaler Profile")</h5>
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <strong>Company Name:</strong>
                         </div>
                         <div class="col-md-9">
-                            @Model.ManufacturerProfile.ManufacturerName
+                            @Model.UserAccountProfile.AccountName
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -81,29 +81,7 @@
                             <strong>Email:</strong>
                         </div>
                         <div class="col-md-9">
-                            @Model.ManufacturerProfile.ManufacturerEmail
-                        </div>
-                    </div>
-                }
-
-                @if (Model.WholesalerProfile != null)
-                {
-                    <hr />
-                    <h5>Wholesaler Profile</h5>
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <strong>Company Name:</strong>
-                        </div>
-                        <div class="col-md-9">
-                            @Model.WholesalerProfile.WholesalerName
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <strong>Email:</strong>
-                        </div>
-                        <div class="col-md-9">
-                            @Model.WholesalerProfile.WholesalerEmail
+                            @Model.UserAccountProfile.AccountEmail
                         </div>
                     </div>
                 }

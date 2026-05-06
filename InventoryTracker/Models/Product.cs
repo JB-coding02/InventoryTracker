@@ -47,26 +47,15 @@ public class Product
 	public string? ImagePath { get; set; }
 
 	/// <summary>
-	/// Relationship to the ManufacturerAccount that produces this product.
+	/// Relationship to the UserAccount that produces or sells this product.
 	/// </summary>
 	[Required]
-	public int ManufacturerId { get; set; }
+	public int UserAccountId { get; set; }
 
 	/// <summary>
-	/// Navigation property to the ManufacturerAccount that produces this product.
+	/// Navigation property to the UserAccount that produces or sells this product.
 	/// </summary>
 	[Required]
-	[ForeignKey(nameof(ManufacturerId))]
-	public ManufacturerAccount? Manufacturer { get; set; }
-
-	/// <summary>
-	/// Relationship to the WholesalerAccount that sells this product.
-	/// </summary>
-	public int? WholesalerId { get; set; }
-
-	/// <summary>
-	/// Navigaion property of the collection of WholesalerAccounts that sell this product.
-	/// </summary>
-	[ForeignKey(nameof(WholesalerId))]
-	public WholesalerAccount? Wholesaler { get; set; }
+	[ForeignKey(nameof(UserAccountId))]
+	public UserAccount? UserAccount { get; set; }
 }

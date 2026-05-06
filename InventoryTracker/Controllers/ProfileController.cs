@@ -17,7 +17,7 @@ namespace InventoryTracker.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
+            ApplicationUser? user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Redirect("/Identity/Account/Login");
@@ -28,13 +28,13 @@ namespace InventoryTracker.Controllers
 
         public async Task<IActionResult> EditProfile()
         {
-            var user = await _userManager.GetUserAsync(User);
+            ApplicationUser? user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Redirect("/Identity/Account/Login");
             }
 
-            var model = new EditProfileViewModel
+            EditProfileViewModel model = new EditProfileViewModel
             {
                 UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
@@ -57,7 +57,7 @@ namespace InventoryTracker.Controllers
                 return View(model);
             }
 
-            var user = await _userManager.GetUserAsync(User);
+            ApplicationUser? user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Redirect("/Identity/Account/Login");
@@ -73,7 +73,7 @@ namespace InventoryTracker.Controllers
             // Update username if it has changed
             if (user.UserName != model.UserName)
             {
-                var existingUser = await _userManager.FindByNameAsync(model.UserName);
+                ApplicationUser? existingUser = await _userManager.FindByNameAsync(model.UserName);
                 if (existingUser != null && existingUser.Id != user.Id)
                 {
                     ModelState.AddModelError("UserName", "This username is already taken.");
@@ -86,7 +86,7 @@ namespace InventoryTracker.Controllers
             // Update email if it has changed
             if (user.Email != model.Email)
             {
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                ApplicationUser? existingUser = await _userManager.FindByEmailAsync(model.Email);
                 if (existingUser != null && existingUser.Id != user.Id)
                 {
                     ModelState.AddModelError("Email", "This email is already in use.");
@@ -101,14 +101,14 @@ namespace InventoryTracker.Controllers
             user.CompanyName = model.CompanyName;
             user.UserRole = model.UserRole;
 
-            var result = await _userManager.UpdateAsync(user);
+            IdentityResult result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
                 TempData["SuccessMessage"] = "Your profile has been updated successfully.";
                 return RedirectToAction("Index");
             }
 
-            foreach (var error in result.Errors)
+            foreach (IdentityError error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
@@ -120,19 +120,19 @@ namespace InventoryTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAccount()
         {
-            var user = await _userManager.GetUserAsync(User);
+            ApplicationUser? user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return Redirect("/Identity/Account/Login");
             }
 
-            var result = await _userManager.DeleteAsync(user);
+            IdentityResult result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
                 return Redirect("/Identity/Account/Login");
             }
 
-            foreach (var error in result.Errors)
+            foreach (IdentityError error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }

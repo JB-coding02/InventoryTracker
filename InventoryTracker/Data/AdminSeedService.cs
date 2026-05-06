@@ -11,16 +11,16 @@ public static class AdminSeedService
 
     public static async Task SeedAdminAccountAsync(IServiceProvider serviceProvider)
     {
-        using (var scope = serviceProvider.CreateScope())
+        using (IServiceScope scope = serviceProvider.CreateScope())
         {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             // Check if admin account already exists by email (email is used for login)
-            var adminUser = await userManager.FindByEmailAsync(AdminEmail);
+            ApplicationUser? adminUser = await userManager.FindByEmailAsync(AdminEmail);
             if (adminUser == null)
             {
                 // Create the admin account with email as username for consistency with the rest of the app
-                var newAdminUser = new ApplicationUser
+                ApplicationUser newAdminUser = new ApplicationUser
                 {
                     UserName = AdminEmail,
                     Email = AdminEmail,
@@ -28,7 +28,7 @@ public static class AdminSeedService
                     UserRole = UserRole.Admin
                 };
 
-                var result = await userManager.CreateAsync(newAdminUser, AdminPassword);
+                IdentityResult result = await userManager.CreateAsync(newAdminUser, AdminPassword);
 
                 if (!result.Succeeded)
                 {
