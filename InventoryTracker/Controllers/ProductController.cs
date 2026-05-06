@@ -52,7 +52,7 @@ public class ProductController : Controller
 	/// </summary>
 	/// <returns>The task result contains an <see cref="IActionResult"/> that
 	/// renders the all products view with a list of all products.</returns>
-	[Authorize]
+	[Authorize(Roles = "Admin")]
 	public async Task<IActionResult> All()
 	{
 		List<Product> allProducts = await _context.Products
