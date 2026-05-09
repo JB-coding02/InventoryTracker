@@ -127,7 +127,7 @@ namespace InventoryTracker.Data.Migrations
                     b.HasIndex("ManufacturerName")
                         .IsUnique();
 
-                    b.ToTable("ManufacturerAccounts");
+                    b.ToTable("ManufacturerAccounts", (string)null);
                 });
 
             modelBuilder.Entity("InventoryTracker.Models.Product", b =>
@@ -164,7 +164,7 @@ namespace InventoryTracker.Data.Migrations
 
                     b.HasIndex("WholesalerId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("InventoryTracker.Models.WholesalerAccount", b =>
@@ -200,7 +200,7 @@ namespace InventoryTracker.Data.Migrations
                     b.HasIndex("WholesalerName")
                         .IsUnique();
 
-                    b.ToTable("WholesalerAccounts");
+                    b.ToTable("WholesalerAccounts", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
