@@ -9,14 +9,23 @@ public static class RoleSeedService
     private const string AdminEmail = "admin@inventorytracker.local";
     private const string AdminPassword = "NoArchitects@2024";
 	
+	/// <summary>
+	/// Creates predefined application roles in the identity store if they do not already exist.
+	/// </summary>
+	/// <remarks>This method is used during application startup to ensure that required roles are present.</remarks>
+	/// <param name="serviceProvider">The service provider used to resolve required services for role management.</param>
+	/// <returns>A task that represents the asynchronous operation.</returns>
+	/// <exception cref="InvalidOperationException">Thrown if a role cannot be created in the identity store.</exception>
 	public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
 	{
+		// Scope dependency injection
 		using IServiceScope scope = serviceProvider.CreateScope();
 		
-
+		// Identity manager service
 		RoleManager<IdentityRole> roleManager = 
 			scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+		// Roles to be seeded
 		string[] roles =
 		[
 			nameof(UserRole.Admin),
@@ -26,11 +35,13 @@ public static class RoleSeedService
 
 		foreach (string role in roles)
 		{
+			// Skip if role exists
 			if (await roleManager.RoleExistsAsync(role))
 			{
 				continue;
 			}
 
+			// Adds new identity role, or list errors if creation fails
 			IdentityResult createRoleResult = await roleManager.CreateAsync(new IdentityRole(role));
 			if (!createRoleResult.Succeeded)
 			{
