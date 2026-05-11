@@ -8,6 +8,33 @@ public static class RoleSeedService
     // Hidden admin credentials - only visible to developers in source code
     private const string AdminEmail = "admin@inventorytracker.local";
     private const string AdminPassword = "NoArchitects@2024";
+	
+	public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
+	{
+		using IServiceScope scope = serviceProvider.CreateScope();
+		
+		
+		RoleManager<IdentityRole> roleManager = 
+			scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+		string[] roles =
+		[
+			nameof(UserRole.Admin),
+			nameof(UserRole.Manufacturer),
+			nameof(UserRole.Wholesaler)
+		];
+
+		foreach (string role in roles)
+		{
+			if (await roleManager.RoleExistsAsync(role))
+			{
+				continue;
+			}
+
+			IdentityResult createRoleResult = await roleManager.CreateAsync(new IdentityRole(role));
+
+		}
+	}
 
     public static async Task SeedAdminAccountAsync(IServiceProvider serviceProvider)
     {
