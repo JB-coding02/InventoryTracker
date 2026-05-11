@@ -13,7 +13,7 @@ public static class RoleSeedService
 	{
 		using IServiceScope scope = serviceProvider.CreateScope();
 		
-		
+
 		RoleManager<IdentityRole> roleManager = 
 			scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -32,10 +32,24 @@ public static class RoleSeedService
 			}
 
 			IdentityResult createRoleResult = await roleManager.CreateAsync(new IdentityRole(role));
-
+			if (!createRoleResult.Succeeded)
+			{
+				var errors = string.Join(", ", createRoleResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+				Console.WriteLine($"[RoleSeedService] Failed to create role '{role}': {errors}");
+				throw new InvalidOperationException($"Failed to create role '{role}': {errors}");
+			}
 		}
 	}
 
+	/// <summary>
+	/// Ensures that an administrator account exists in the application's user store, creating or updating it as necessary.
+	/// </summary>
+	/// <remarks>If an administrator account with the configured email does not exist, this method creates one with
+	/// the appropriate role and confirmed email status. If the account already exists, it ensures the account is properly
+	/// configured</remarks>
+	/// <param name="serviceProvider">The service provider used to resolve required services for user management and account creation.</param>
+	/// <returns>A task that represents the asynchronous operation.</returns>
+	/// <exception cref="InvalidOperationException">Thrown if the administrator account cannot be created due to an error from the user management system.</exception>
     public static async Task SeedAdminAccountAsync(IServiceProvider serviceProvider)
     {
 		using IServiceScope scope = serviceProvider.CreateScope();
