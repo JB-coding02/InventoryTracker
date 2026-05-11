@@ -32,7 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Seed admin account on startup
-await AdminSeedService.SeedAdminAccountAsync(app.Services);
+await RoleSeedService.SeedAdminAccountAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

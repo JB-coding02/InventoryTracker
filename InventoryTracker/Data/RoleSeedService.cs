@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace InventoryTracker.Data;
 
-public static class AdminSeedService
+public static class RoleSeedService
 {
     // Hidden admin credentials - only visible to developers in source code
     private const string AdminEmail = "admin@inventorytracker.local";
