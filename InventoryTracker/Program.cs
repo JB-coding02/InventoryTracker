@@ -31,8 +31,13 @@ if (app.Environment.IsDevelopment())
     await dbContext.Database.MigrateAsync();
 }
 
-// Seed admin account on startup
-await AdminSeedService.SeedAdminAccountAsync(app.Services);
+#if DEBUG 
+	// Seed account roles on startup
+	await RoleSeedService.SeedRolesAsync(app.Services);
+	// Seed admin account on startup
+	await RoleSeedService.SeedAdminAccountAsync(app.Services);
+#endif
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
