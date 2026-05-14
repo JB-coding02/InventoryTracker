@@ -22,12 +22,12 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="ManufacturerId" class="form-label">Manufacturer</label>
-        <select asp-for="ManufacturerId" class="form-select"
-                asp-items="@(new SelectList(ViewBag.Manufacturers, "ManufacturerId", "ManufacturerName"))">
+        <label asp-for="UserAccountId" class="form-label">Manufacturer</label>
+        <select asp-for="UserAccountId" class="form-select"
+                asp-items="@(new SelectList(ViewBag.UserAccounts, "UserAccountId", "AccountName"))">
             <option value="">-- Select Manufacturer --</option>
         </select>
-        <span asp-validation-for="ManufacturerId" class="text-danger"></span>
+        <span asp-validation-for="UserAccountId" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Add Product</button>

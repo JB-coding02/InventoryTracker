@@ -52,7 +52,7 @@ public class ProductController : Controller
 	[HttpGet]
 	public async Task<IActionResult> Add ()
 	{
-		ViewBag.Manufacturers = await _context.ManufacturerAccounts.ToListAsync();
+		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
 		return View();
 	}
 
@@ -69,7 +69,7 @@ public class ProductController : Controller
 			return RedirectToAction(nameof(List));
 		}
 
-		ViewBag.Manufacturers = await _context.ManufacturerAccounts.ToListAsync();
+		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
 		return View(product);
 	}
 
@@ -85,6 +85,7 @@ public class ProductController : Controller
 			.Include(p => p.UserAccount) // Eager load the related UserAccount data
 			.OrderBy(p => p.Name)
 			.ToListAsync();
+
 
 		return View(allProducts);
 	}
