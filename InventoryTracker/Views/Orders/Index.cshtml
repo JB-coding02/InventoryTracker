@@ -1,0 +1,143 @@
+@using InventoryTracker.Models
+@model List<Order>
+
+@{
+    ViewData["Title"] = "All Orders";
+    Layout = "_Layout";
+    List<UserAccount>? wholesalers = ViewData["Wholesalers"] as List<UserAccount>;
+    List<UserAccount>? manufacturers = ViewData["Manufacturers"] as List<UserAccount>;
+    string? searchTerm = ViewData["SearchTerm"] as string;
+    int? selectedWholesalerId = ViewData["SelectedWholesalerId"] as int?;
+    int? selectedManufacturerId = ViewData["SelectedManufacturerId"] as int?;
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>All Orders</h1>
+        </div>
+    </div>
+
+    <!-- Search and Filter Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Search and Filter Orders</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-action="Index" class="row g-3">
+                <!-- Search Term -->
+                <div class="col-md-4">
+                    <label for="searchTerm" class="form-label">Search</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="searchTerm" 
+                           name="searchTerm" 
+                           placeholder="Order ID, Product Name, or Status"
+                           value="@searchTerm" />
+                </div>
+
+                <!-- Wholesaler Filter -->
+                <div class="col-md-4">
+                    <label for="wholesalerId" class="form-label">Wholesaler</label>
+                    <select class="form-select" id="wholesalerId" name="wholesalerId">
+                        <option value="">-- All Wholesalers --</option>
+                        @if (wholesalers != null)
+                        {
+                            @foreach (UserAccount wholesaler in wholesalers)
+                            {
+                                <option value="@wholesaler.UserAccountId" 
+                                        selected="@(selectedWholesalerId == wholesaler.UserAccountId)">
+                                    @wholesaler.AccountName
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <!-- Manufacturer Filter -->
+                <div class="col-md-4">
+                    <label for="manufacturerId" class="form-label">Manufacturer</label>
+                    <select class="form-select" id="manufacturerId" name="manufacturerId">
+                        <option value="">-- All Manufacturers --</option>
+                        @if (manufacturers != null)
+                        {
+                            @foreach (UserAccount manufacturer in manufacturers)
+                            {
+                                <option value="@manufacturer.UserAccountId" 
+                                        selected="@(selectedManufacturerId == manufacturer.UserAccountId)">
+                                    @manufacturer.AccountName
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a asp-action="Index" class="btn btn-secondary">Clear Filters</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            No orders found matching your search criteria.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Date</th>
+                        <th>Wholesaler (Buyer)</th>
+                        <th>Manufacturer (Seller)</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (Order order in Model)
+                    {
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.OrderDate.ToString("MMM dd, yyyy HH:mm")</td>
+                            <td>@(order.Wholesaler?.AccountName ?? "Unknown")</td>
+                            <td>@(order.Manufacturer?.AccountName ?? "Unknown")</td>
+                            <td>@(order.Product?.Name ?? "Unknown")</td>
+                            <td>@order.Quantity</td>
+                            <td>
+                                <span class="badge bg-@GetStatusBadgeColor(order.Status)">
+                                    @order.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mt-3">Back to Home</a>
+</div>
+
+@functions {
+    private string GetStatusBadgeColor(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "pending" => "warning",
+            "shipped" => "info",
+            "delivered" => "success",
+            "cancelled" => "danger",
+            _ => "secondary"
+        };
+    }
+}

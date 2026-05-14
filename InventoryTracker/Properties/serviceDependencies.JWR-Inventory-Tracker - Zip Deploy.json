@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "mssql1": {
-      "type": "mssql",
+      "secretStore": "AzureAppSettings",
+      "type": "mssql.onprem",
       "connectionId": "ConnectionStrings:DefaultConnection",
       "dynamicId": null
     }
