@@ -154,7 +154,8 @@ public class AccountController (
         {
             UserName = model.Email,
             Email = model.Email,
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            CompanyName = model.CompanyName
         };
 
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);

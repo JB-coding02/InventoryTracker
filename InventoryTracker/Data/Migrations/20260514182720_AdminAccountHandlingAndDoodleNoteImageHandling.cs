@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace InventoryTracker.Migrations;
+namespace Migrations;
 
 /// <inheritdoc />
-public partial class Initial : Migration
+public partial class AdminAccountHandlingAndDoodleNoteImageHandling : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,8 +30,6 @@ public partial class Initial : Migration
             columns: table => new
             {
                 Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                CompanyName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                UserRole = table.Column<int>(type: "int", nullable: false),
                 UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                 NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                 Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -50,6 +48,21 @@ public partial class Initial : Migration
             constraints: table =>
             {
                 table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "DoodleNotes",
+            columns: table => new
+            {
+                NoteId = table.Column<int>(type: "int", nullable: false)
+                    .Annotation("SqlServer:Identity", "1, 1"),
+                NoteTitle = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                CreatedDate = table.Column<DateTime>(type: "date", nullable: false),
+                Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_DoodleNotes", x => x.NoteId);
             });
 
         migrationBuilder.CreateTable(
@@ -158,87 +171,6 @@ public partial class Initial : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateTable(
-            name: "UserAccounts",
-            columns: table => new
-            {
-                UserAccountId = table.Column<int>(type: "int", nullable: false)
-                    .Annotation("SqlServer:Identity", "1, 1"),
-                AccountName = table.Column<string>(type: "nvarchar(75)", maxLength: 75, nullable: false),
-                AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                AccountEmail = table.Column<string>(type: "nvarchar(65)", maxLength: 65, nullable: false),
-                AccountRole = table.Column<int>(type: "int", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_UserAccounts", x => x.UserAccountId);
-                table.ForeignKey(
-                    name: "FK_UserAccounts_AspNetUsers_AppUserId",
-                    column: x => x.AppUserId,
-                    principalTable: "AspNetUsers",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "Products",
-            columns: table => new
-            {
-                ProductId = table.Column<int>(type: "int", nullable: false)
-                    .Annotation("SqlServer:Identity", "1, 1"),
-                Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                StockQuantity = table.Column<int>(type: "int", nullable: false),
-                ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                UserAccountId = table.Column<int>(type: "int", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_Products", x => x.ProductId);
-                table.ForeignKey(
-                    name: "FK_Products_UserAccounts_UserAccountId",
-                    column: x => x.UserAccountId,
-                    principalTable: "UserAccounts",
-                    principalColumn: "UserAccountId",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "Orders",
-            columns: table => new
-            {
-                OrderId = table.Column<int>(type: "int", nullable: false)
-                    .Annotation("SqlServer:Identity", "1, 1"),
-                WholesalerId = table.Column<int>(type: "int", nullable: false),
-                ManufacturerId = table.Column<int>(type: "int", nullable: false),
-                ProductId = table.Column<int>(type: "int", nullable: false),
-                Quantity = table.Column<int>(type: "int", nullable: false),
-                OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_Orders", x => x.OrderId);
-                table.ForeignKey(
-                    name: "FK_Orders_Products_ProductId",
-                    column: x => x.ProductId,
-                    principalTable: "Products",
-                    principalColumn: "ProductId",
-                    onDelete: ReferentialAction.Restrict);
-                table.ForeignKey(
-                    name: "FK_Orders_UserAccounts_ManufacturerId",
-                    column: x => x.ManufacturerId,
-                    principalTable: "UserAccounts",
-                    principalColumn: "UserAccountId",
-                    onDelete: ReferentialAction.Restrict);
-                table.ForeignKey(
-                    name: "FK_Orders_UserAccounts_WholesalerId",
-                    column: x => x.WholesalerId,
-                    principalTable: "UserAccounts",
-                    principalColumn: "UserAccountId",
-                    onDelete: ReferentialAction.Restrict);
-            });
-
         migrationBuilder.CreateIndex(
             name: "IX_AspNetRoleClaims_RoleId",
             table: "AspNetRoleClaims",
@@ -277,44 +209,6 @@ public partial class Initial : Migration
             column: "NormalizedUserName",
             unique: true,
             filter: "[NormalizedUserName] IS NOT NULL");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_Orders_ManufacturerId",
-            table: "Orders",
-            column: "ManufacturerId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_Orders_ProductId",
-            table: "Orders",
-            column: "ProductId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_Orders_WholesalerId",
-            table: "Orders",
-            column: "WholesalerId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_Products_UserAccountId",
-            table: "Products",
-            column: "UserAccountId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_UserAccounts_AccountEmail",
-            table: "UserAccounts",
-            column: "AccountEmail",
-            unique: true);
-
-        migrationBuilder.CreateIndex(
-            name: "IX_UserAccounts_AccountName",
-            table: "UserAccounts",
-            column: "AccountName",
-            unique: true);
-
-        migrationBuilder.CreateIndex(
-            name: "IX_UserAccounts_AppUserId",
-            table: "UserAccounts",
-            column: "AppUserId",
-            unique: true);
     }
 
     /// <inheritdoc />
@@ -336,16 +230,10 @@ public partial class Initial : Migration
             name: "AspNetUserTokens");
 
         migrationBuilder.DropTable(
-            name: "Orders");
+            name: "DoodleNotes");
 
         migrationBuilder.DropTable(
             name: "AspNetRoles");
-
-        migrationBuilder.DropTable(
-            name: "Products");
-
-        migrationBuilder.DropTable(
-            name: "UserAccounts");
 
         migrationBuilder.DropTable(
             name: "AspNetUsers");
