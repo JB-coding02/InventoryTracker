@@ -1,35 +1,53 @@
 ﻿@model InventoryTracker.Models.Product
 
-<h2>Add Product</h2>
+@{
+    ViewData["Title"] = "Add Product";
+}
 
-<form asp-action="Add" method="post">
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0 fw-bold">Add Product</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Add" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter product name" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label fw-semibold"></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="Price" class="form-control" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="StockQuantity" class="form-label fw-semibold"></label>
+                        <input asp-for="StockQuantity" class="form-control" placeholder="Enter quantity" />
+                        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UserAccountId" class="form-label fw-semibold">Manufacturer</label>
+                        <select asp-for="UserAccountId" class="form-select"
+                                asp-items="@(new SelectList(ViewBag.UserAccounts, "UserAccountId", "AccountName"))">
+                            <option value="">-- Select Manufacturer --</option>
+                        </select>
+                        <span asp-validation-for="UserAccountId" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                        <a asp-action="List" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="StockQuantity" class="form-label"></label>
-        <input asp-for="StockQuantity" class="form-control" />
-        <span asp-validation-for="StockQuantity" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="UserAccountId" class="form-label">Manufacturer</label>
-        <select asp-for="UserAccountId" class="form-select"
-                asp-items="@(new SelectList(ViewBag.UserAccounts, "UserAccountId", "AccountName"))">
-            <option value="">-- Select Manufacturer --</option>
-        </select>
-        <span asp-validation-for="UserAccountId" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Add Product</button>
-    <a asp-action="List" class="btn btn-secondary">Cancel</a>
-</form>
+</div>

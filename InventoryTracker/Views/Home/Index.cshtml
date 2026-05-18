@@ -4,8 +4,39 @@
 
 <div class="px-4 py-5 text-center">
     <h1 class="display-4 fw-bold">Inventory Tracker</h1>
+    <p class="lead text-muted mb-4"></p>
     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
         <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg px-4">Login</a>
         <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-secondary btn-lg px-4">Register</a>
+    </div>
+</div>
+
+<div class="row text-center mt-5">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Browse Products</h5>
+                <p class="card-text text-muted">View all available products from registered manufacturers.</p>
+                <a asp-controller="Product" asp-action="List" class="btn btn-outline-primary">View Products</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Manufacturers</h5>
+                <p class="card-text text-muted">Register as a manufacturer to list and manage your products.</p>
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary">Get Started</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Wholesalers</h5>
+                <p class="card-text text-muted">Register as a wholesaler to browse and order products.</p>
+                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary">Get Started</a>
+            </div>
+        </div>
     </div>
 </div>
