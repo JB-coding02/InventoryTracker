@@ -1,5 +1,6 @@
 ﻿using InventoryTracker.Data;
 using InventoryTracker.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,7 +26,7 @@ public class ProductController : Controller
 	public async Task<IActionResult> Index (int id)
 	{
 		Product? product = await _context.Products
-			.Include(p => p.Manufacturer) // Eager load the related Manufacturer data
+			.Include(p => p.UserAccount) // Eager load the related UserAccount data
 			.FirstOrDefaultAsync(p => p.ProductId == id);
 
 		if (product == null) { 
@@ -40,10 +41,26 @@ public class ProductController : Controller
 	public async Task<IActionResult> List ()
 	{
 		List<Product> products = await _context.Products
-			.Include(p => p.Manufacturer)
+			.Include(p => p.UserAccount)
 			.ToListAsync();
 
 		return View(products);
+	}
+
+	/// <summary>
+	/// Displays all products in the system (Admin only).
+	/// </summary>
+	/// <returns>The task result contains an <see cref="IActionResult"/> that
+	/// renders the all products view with a list of all products.</returns>
+	[Authorize(Roles = "Admin")]
+	public async Task<IActionResult> All()
+	{
+		List<Product> allProducts = await _context.Products
+			.Include(p => p.UserAccount) // Eager load the related UserAccount data
+			.OrderBy(p => p.Name)
+			.ToListAsync();
+
+		return View(allProducts);
 	}
 
 

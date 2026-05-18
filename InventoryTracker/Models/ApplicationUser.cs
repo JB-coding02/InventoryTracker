@@ -11,7 +11,5 @@ public class ApplicationUser : IdentityUser
     [Required]
     public UserRole UserRole { get; set; } = UserRole.Manufacturer;
 
-    public ManufacturerAccount? ManufacturerProfile { get; set; }
-
-    public WholesalerAccount? WholesalerProfile { get; set; }
+    public UserAccount? UserAccountProfile { get; set; }
 }
