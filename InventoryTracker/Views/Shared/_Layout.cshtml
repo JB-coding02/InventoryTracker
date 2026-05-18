@@ -26,24 +26,6 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Product" asp-action="List">Products</a>
                         </li>
-                        @if (User.Identity?.IsAuthenticated == true && User.Identity is ApplicationUser appUser)
-                        {
-                            @if (User.Identity?.IsAuthenticated == true && User.Identity is ApplicationUser appUser2 && appUser2.WholesalerProfile != null)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
-                                </li>
-                            }
-                            @if (User.Identity?.IsAuthenticated == true && User.Identity is ApplicationUser appUser3 && appUser3.ManufacturerProfile != null)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Inventory" asp-action="Index">My Inventory</a>
-                                </li>
-                            }
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">My Profile</a>
-                            </li>
-                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
