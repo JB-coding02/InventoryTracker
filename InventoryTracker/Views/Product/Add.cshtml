@@ -36,7 +36,7 @@
                     <div class="mb-3">
                         <label asp-for="UserAccountId" class="form-label fw-semibold">Manufacturer</label>
                         <select asp-for="UserAccountId" class="form-select"
-                                asp-items="@(new SelectList(ViewBag.UserAccounts, "UserAccountId", "AccountName"))">
+                                asp-items="@(new SelectList(ViewBag.Manufacturers, "UserAccountId", "AccountName"))">
                             <option value="">-- Select Manufacturer --</option>
                         </select>
                         <span asp-validation-for="UserAccountId" class="text-danger"></span>
