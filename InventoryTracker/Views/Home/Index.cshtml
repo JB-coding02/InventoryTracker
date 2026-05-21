@@ -1,11 +1,24 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
 
 <div class="px-4 py-5 text-center">
     <h1 class="display-4 fw-bold">Inventory Tracker</h1>
-    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-lg px-4">Login</a>
-        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-secondary btn-lg px-4">Register</a>
-    </div>
+    @if (!SignInManager.IsSignedIn(User))
+    {
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a asp-controller="Account"
+               asp-action="Login"
+               asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")"
+               class="btn btn-primary btn-lg px-4">Login</a>
+
+            <a asp-controller="Account"
+               asp-action="Register"
+               asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")"
+               class="btn btn-outline-secondary btn-lg px-4">Register</a>
+        </div>
+    }
+    
 </div>
