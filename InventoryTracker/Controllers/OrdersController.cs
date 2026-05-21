@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventoryTracker.Controllers;
 
+/// <summary>
+/// Manages order-related operations including viewing and filtering orders in the system.
+/// This controller provides administrative functionality to view all orders with search and filtering capabilities.
+/// </summary>
 public class OrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -22,8 +26,8 @@ public class OrdersController : Controller
     /// <param name="wholesalerId">Filter orders by Wholesaler ID.</param>
     /// <param name="manufacturerId">Filter orders by Manufacturer ID.</param>
     /// <returns>Returns the All Orders view with filtered results.</returns>
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Index(string? searchTerm, int? wholesalerId, int? manufacturerId)
+    [Authorize(Roles = "Admin,Wholesaler")]
+    public async Task<IActionResult> Index(string? searchTerm, string? wholesalerId, string? manufacturerId)
     {
         IQueryable<Order> ordersQuery = _context.Orders
             .Include(o => o.Wholesaler)
@@ -46,15 +50,15 @@ public class OrdersController : Controller
         }
 
         // Apply Wholesaler filter
-        if (wholesalerId.HasValue)
+        if (!string.IsNullOrWhiteSpace(wholesalerId))
         {
-            ordersQuery = ordersQuery.Where(o => o.WholesalerId == wholesalerId.Value);
+            ordersQuery = ordersQuery.Where(o => o.WholesalerId == wholesalerId);
         }
 
         // Apply Manufacturer filter
-        if (manufacturerId.HasValue)
+        if (!string.IsNullOrWhiteSpace(manufacturerId))
         {
-            ordersQuery = ordersQuery.Where(o => o.ManufacturerId == manufacturerId.Value);
+            ordersQuery = ordersQuery.Where(o => o.ManufacturerId == manufacturerId);
         }
 
         // Execute query and order by date
@@ -62,15 +66,16 @@ public class OrdersController : Controller
             .OrderByDescending(o => o.OrderDate)
             .ToListAsync();
 
-        // Get lists for dropdowns
-        List<UserAccount> wholesalers = await _context.UserAccounts
-            .Where(u => u.AccountRole == UserRole.Wholesaler)
-            .OrderBy(u => u.AccountName)
+        // Get lists for dropdowns - ApplicationUsers with Wholesaler role
+        List<ApplicationUser> wholesalers = await _context.Users
+            .Where(u => u.UserRole == UserRole.Wholesaler)
+            .OrderBy(u => u.CompanyName)
             .ToListAsync();
 
-        List<UserAccount> manufacturers = await _context.UserAccounts
-            .Where(u => u.AccountRole == UserRole.Manufacturer)
-            .OrderBy(u => u.AccountName)
+        // Get lists for dropdowns - ApplicationUsers with Manufacturer role
+        List<ApplicationUser> manufacturers = await _context.Users
+            .Where(u => u.UserRole == UserRole.Manufacturer)
+            .OrderBy(u => u.CompanyName)
             .ToListAsync();
 
         // Pass data to view

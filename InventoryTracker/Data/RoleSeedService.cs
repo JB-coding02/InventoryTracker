@@ -3,10 +3,24 @@ using Microsoft.AspNetCore.Identity;
 
 namespace InventoryTracker.Data;
 
+/// <summary>
+/// A static utility service that initializes essential Identity roles and the administrator account during application startup.
+/// Ensures that the Admin, Manufacturer, and Wholesaler roles exist and that at least one administrator account is available
+/// for system management and configuration.
+/// </summary>
 public static class RoleSeedService
 {
+    /// <summary>
+    /// The email address for the default administrator account.
+    /// Hidden in source code for developer reference only; do not expose in production logs.
+    /// </summary>
     // Hidden admin credentials - only visible to developers in source code
     private const string AdminEmail = "admin@inventorytracker.local";
+
+    /// <summary>
+    /// The default password for the administrator account.
+    /// Hidden in source code for developer reference only; do not expose in production logs.
+    /// </summary>
     private const string AdminPassword = "NoArchitects@2024";
 	
 	/// <summary>

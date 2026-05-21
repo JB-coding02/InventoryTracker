@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventoryTracker.Controllers;
 
+/// <summary>
+/// Manages product-related operations including viewing individual product details and listing products in the inventory system.
+/// Provides public product browsing and administrative views for all products.
+/// </summary>
 public class ProductController : Controller
 {
 	private readonly ApplicationDbContext _context;
@@ -38,6 +42,7 @@ public class ProductController : Controller
 	/// Displays a listing of all products with their manufacturer info.
 	/// </summary>
 	/// <returns>A view containing all products.</returns>
+	[Authorize(Roles = "Manufacturer")]
 	public async Task<IActionResult> List ()
 	{
 		List<Product> products = await _context.Products
