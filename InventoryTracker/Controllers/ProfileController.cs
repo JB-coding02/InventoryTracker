@@ -105,7 +105,7 @@ namespace InventoryTracker.Controllers
             if (result.Succeeded)
             {
                 TempData["SuccessMessage"] = "Your profile has been updated successfully.";
-                return RedirectToAction("Index");
+                return Redirect("/Identity/Account/Manage");
             }
 
             foreach (IdentityError error in result.Errors)
