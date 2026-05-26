@@ -9,6 +9,7 @@
     @if (!SignInManager.IsSignedIn(User))
     {
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <!--Custom login and register pages not provided by Identity-->
             <a asp-controller="Account"
                asp-action="Login"
                asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")"
