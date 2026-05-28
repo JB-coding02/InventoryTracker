@@ -1,6 +1,11 @@
 ﻿@model List<InventoryTracker.Models.Product>
 
-<h2>Products</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Products</h2>
+    <a asp-controller="Product" asp-action="Add" class="btn btn-success" style="background-color: #0f5132; border-color: #0f5132;">
+        Add Product
+    </a>
+</div>
 
 @if (Model.Count == 0)
 {

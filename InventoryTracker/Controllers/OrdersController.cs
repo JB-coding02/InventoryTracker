@@ -1,4 +1,5 @@
 using InventoryTracker.Data;
+using InventoryTracker.Authorization;
 using InventoryTracker.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,13 @@ public class OrdersController : Controller
     }
 
     /// <summary>
-    /// Displays all orders with search and filter capabilities (admin only).
+    /// Displays all orders with search and filter capabilities for admins and wholesalers.
     /// </summary>
     /// <param name="searchTerm">Search term to filter orders by product name or ID.</param>
     /// <param name="wholesalerId">Filter orders by Wholesaler ID.</param>
     /// <param name="manufacturerId">Filter orders by Manufacturer ID.</param>
     /// <returns>Returns the All Orders view with filtered results.</returns>
-    [Authorize(Roles = "Admin,Wholesaler")]
+    [Authorize(Policy = AuthorizationPolicies.ViewOrders)]
     public async Task<IActionResult> Index(string? searchTerm, string? wholesalerId, string? manufacturerId)
     {
         IQueryable<Order> ordersQuery = _context.Orders

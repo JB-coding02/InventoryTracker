@@ -1,6 +1,8 @@
 using InventoryTracker.Data;
+using InventoryTracker.Authorization;
 using InventoryTracker.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
@@ -20,6 +22,18 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthorizationPolicies.ViewOrders, policy =>
+        policy.Requirements.Add(new UserRoleRequirement(UserRole.Admin, UserRole.Wholesaler)));
+
+    options.AddPolicy(AuthorizationPolicies.ViewManufacturerInventory, policy =>
+        policy.Requirements.Add(new UserRoleRequirement(UserRole.Manufacturer)));
+
+    options.AddPolicy(AuthorizationPolicies.ViewAllProducts, policy =>
+        policy.Requirements.Add(new UserRoleRequirement(UserRole.Admin)));
+});
+builder.Services.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
