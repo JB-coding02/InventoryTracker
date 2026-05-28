@@ -6,11 +6,12 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 
-<div class="px-4 py-5 text-center">
+<section class="px-4 py-5 text-center border-bottom">
     <h1 class="display-4 fw-bold">Inventory Tracker</h1>
+
     @if (!SignInManager.IsSignedIn(User))
     {
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-3">
             <!--Custom login and register pages not provided by Identity-->
             <a asp-controller="Account"
                asp-action="Login"
@@ -21,123 +22,132 @@
                asp-action="Register"
                class="btn btn-outline-secondary btn-lg px-4">Register</a>
         </div>
-
-    
-    } else
+    }
+    else
     {
-		<h2>Signed in as @Model.SignedInAs</h2>
+        <p class="lead mb-0 mt-3">Signed in as <strong>@Model.SignedInAs</strong></p>
+    }
+</section>
 
-        <div class="container">
+@if (SignInManager.IsSignedIn(User))
+{
+    <section class="py-4">
+        <div class="container-xl text-start">
             @if (Model.IsManufacturer)
             {
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h3 class="mb-0">Your Products@(string.IsNullOrWhiteSpace(Model.ManufacturerAccountName) ? string.Empty : $" — {Model.ManufacturerAccountName}")</h3>
-                    <a asp-controller="Product" asp-action="Add" class="btn btn-primary">Add Product</a>
-                </div>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                            <h3 class="mb-0">Your Products@(string.IsNullOrWhiteSpace(Model.ManufacturerAccountName) ? string.Empty : $" — {Model.ManufacturerAccountName}")</h3>
+                            <a asp-controller="Product" asp-action="Add" class="btn btn-primary">Add Product</a>
+                        </div>
 
-                @if (Model.ManufacturerProducts == null || Model.ManufacturerProducts.Items.Count == 0)
-                {
-                    <div class="alert alert-info">No products found.</div>
-                }
-                else
-                {
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Stock</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var product in Model.ManufacturerProducts.Items)
-                                {
-                                    <tr>
-                                        <td>@product.Name</td>
-                                        <td>@product.Price.ToString("C")</td>
-                                        <td>@product.StockQuantity</td>
-                                        <td>
-                                            <a asp-controller="Product" asp-action="Index" asp-route-id="@product.ProductId" class="btn btn-sm btn-outline-primary">View</a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                        @if (Model.ManufacturerProducts == null || Model.ManufacturerProducts.Items.Count == 0)
+                        {
+                            <div class="alert alert-info mb-0">No products found.</div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>Stock</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var product in Model.ManufacturerProducts.Items)
+                                        {
+                                            <tr>
+                                                <td>@product.Name</td>
+                                                <td>@product.Price.ToString("C")</td>
+                                                <td>@product.StockQuantity</td>
+                                                <td class="text-end">
+                                                    <a asp-controller="Product" asp-action="Index" asp-route-id="@product.ProductId" class="btn btn-sm btn-outline-primary">View</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            @if (Model.ManufacturerProducts.TotalPages > 1)
+                            {
+                                <nav aria-label="Product pagination" class="mt-3">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item @(Model.ManufacturerProducts.HasPreviousPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturerProducts.Page - 1)" asp-route-pageSize="@Model.ManufacturerProducts.PageSize">Previous</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">Page @Model.ManufacturerProducts.Page of @Model.ManufacturerProducts.TotalPages</span>
+                                        </li>
+                                        <li class="page-item @(Model.ManufacturerProducts.HasNextPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturerProducts.Page + 1)" asp-route-pageSize="@Model.ManufacturerProducts.PageSize">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            }
+                        }
                     </div>
-
-                    @if (Model.ManufacturerProducts.TotalPages > 1)
-                    {
-                        <nav aria-label="Product pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item @(Model.ManufacturerProducts.HasPreviousPage ? string.Empty : "disabled")">
-                                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturerProducts.Page - 1)" asp-route-pageSize="@Model.ManufacturerProducts.PageSize">Previous</a>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link">Page @Model.ManufacturerProducts.Page of @Model.ManufacturerProducts.TotalPages</span>
-                                </li>
-                                <li class="page-item @(Model.ManufacturerProducts.HasNextPage ? string.Empty : "disabled")">
-                                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturerProducts.Page + 1)" asp-route-pageSize="@Model.ManufacturerProducts.PageSize">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    }
-                }
+                </div>
             }
             else if (Model.IsWholesaler)
             {
-                <h3 class="mb-3">Manufacturers with Products</h3>
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="mb-3">Manufacturers with Products</h3>
 
-                @if (Model.ManufacturersWithProducts == null || Model.ManufacturersWithProducts.Items.Count == 0)
-                {
-                    <div class="alert alert-info">No manufacturers with products found.</div>
-                }
-                else
-                {
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Manufacturer</th>
-                                    <th>Email</th>
-                                    <th>Products</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var m in Model.ManufacturersWithProducts.Items)
-                                {
-                                    <tr>
-                                        <td>@m.AccountName</td>
-                                        <td>@m.AccountEmail</td>
-                                        <td>@m.ProductCount</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                        @if (Model.ManufacturersWithProducts == null || Model.ManufacturersWithProducts.Items.Count == 0)
+                        {
+                            <div class="alert alert-info mb-0">No manufacturers with products found.</div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Manufacturer</th>
+                                            <th>Email</th>
+                                            <th>Products</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var m in Model.ManufacturersWithProducts.Items)
+                                        {
+                                            <tr>
+                                                <td>@m.AccountName</td>
+                                                <td>@m.AccountEmail</td>
+                                                <td>@m.ProductCount</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            @if (Model.ManufacturersWithProducts.TotalPages > 1)
+                            {
+                                <nav aria-label="Manufacturer pagination" class="mt-3">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item @(Model.ManufacturersWithProducts.HasPreviousPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturersWithProducts.Page - 1)" asp-route-pageSize="@Model.ManufacturersWithProducts.PageSize">Previous</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">Page @Model.ManufacturersWithProducts.Page of @Model.ManufacturersWithProducts.TotalPages</span>
+                                        </li>
+                                        <li class="page-item @(Model.ManufacturersWithProducts.HasNextPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturersWithProducts.Page + 1)" asp-route-pageSize="@Model.ManufacturersWithProducts.PageSize">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            }
+                        }
                     </div>
-
-                    @if (Model.ManufacturersWithProducts.TotalPages > 1)
-                    {
-                        <nav aria-label="Manufacturer pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item @(Model.ManufacturersWithProducts.HasPreviousPage ? string.Empty : "disabled")">
-                                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturersWithProducts.Page - 1)" asp-route-pageSize="@Model.ManufacturersWithProducts.PageSize">Previous</a>
-                                </li>
-                                <li class="page-item disabled">
-                                    <span class="page-link">Page @Model.ManufacturersWithProducts.Page of @Model.ManufacturersWithProducts.TotalPages</span>
-                                </li>
-                                <li class="page-item @(Model.ManufacturersWithProducts.HasNextPage ? string.Empty : "disabled")">
-                                    <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturersWithProducts.Page + 1)" asp-route-pageSize="@Model.ManufacturersWithProducts.PageSize">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    }
-                }
+                </div>
             }
         </div>
-    }
-      
-        
-        
-</div>  
+    </section>
+}
