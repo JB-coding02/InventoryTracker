@@ -52,7 +52,6 @@ public class ProductController : Controller
 		List<Product> products = await _context.Products
 			.Include(p => p.UserAccount)
 			.ToListAsync();
-
 		return View(products);
 	}
 
