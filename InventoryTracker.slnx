@@ -3,6 +3,5 @@
     <File Path=".editorconfig" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="InventoryTracker.Tests/InventoryTracker.Tests.csproj" />
   <Project Path="InventoryTracker/InventoryTracker.csproj" />
 </Solution>
