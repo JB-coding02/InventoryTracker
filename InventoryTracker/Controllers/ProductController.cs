@@ -48,6 +48,31 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 			.ToListAsync();
 		return View(products);
 	}
+	/// <summary>
+	/// Displays the form to add a new product.
+	/// </summary>
+	[HttpGet]
+	public async Task<IActionResult> Add ()
+	{
+		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
+		return View();
+	}
+
+	/// <summary>
+	/// Handles the form submission to add a new product.
+	/// </summary>
+	[HttpPost]
+	public async Task<IActionResult> Add (Product product)
+	{
+		if (ModelState.IsValid)
+		{
+			_context.Products.Add(product);
+			await _context.SaveChangesAsync();
+			return RedirectToAction(nameof(List));
+		}
+		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
+		return View(product);
+	}
 
 	[HttpGet]
 	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
@@ -106,6 +131,7 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 			.Include(p => p.UserAccount) // Eager load the related UserAccount data
 			.OrderBy(p => p.Name)
 			.ToListAsync();
+
 
 		return View(allProducts);
 	}
