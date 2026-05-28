@@ -74,13 +74,6 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 		return View(product);
 	}
 
-	[HttpGet]
-	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
-	public IActionResult Add()
-	{
-		return View(new AddProductViewModel());
-	}
-
 	[HttpPost]
 	[ValidateAntiForgeryToken]
 	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
