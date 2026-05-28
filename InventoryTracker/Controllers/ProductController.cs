@@ -12,16 +12,10 @@ namespace InventoryTracker.Controllers;
 /// Manages product-related operations including viewing individual product details and listing products in the inventory system.
 /// Provides public product browsing and administrative views for all products.
 /// </summary>
-public class ProductController : Controller
+public class ProductController (ApplicationDbContext context, UserManager<ApplicationUser> userManager) : Controller
 {
-	private readonly ApplicationDbContext _context;
-	private readonly UserManager<ApplicationUser> _userManager;
-
-	public ProductController (ApplicationDbContext context, UserManager<ApplicationUser> userManager)
-	{
-		_context = context;
-		_userManager = userManager;
-	}
+	private readonly ApplicationDbContext _context = context;
+	private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
 	/// <summary>
@@ -86,7 +80,7 @@ public class ProductController : Controller
 			return View(model);
 		}
 
-		Product product = new Product
+		Product product = new()
 		{
 			Name = model.Title,
 			Price = model.Price,
