@@ -68,7 +68,6 @@ public class ProductController : Controller
 			await _context.SaveChangesAsync();
 			return RedirectToAction(nameof(List));
 		}
-
 		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
 		return View(product);
 	}
