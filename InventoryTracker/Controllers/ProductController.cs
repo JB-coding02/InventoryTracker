@@ -1,19 +1,21 @@
 ﻿using InventoryTracker.Data;
+using InventoryTracker.Authorization;
 using InventoryTracker.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryTracker.Controllers;
 
-public class ProductController : Controller
+/// <summary>
+/// Manages product-related operations including viewing individual product details and listing products in the inventory system.
+/// Provides public product browsing and administrative views for all products.
+/// </summary>
+public class ProductController (ApplicationDbContext context, UserManager<ApplicationUser> userManager) : Controller
 {
-	private readonly ApplicationDbContext _context;
-
-	public ProductController (ApplicationDbContext context)
-	{
-		_context = context;
-	}
+	private readonly ApplicationDbContext _context = context;
+	private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
 	/// <summary>
@@ -38,12 +40,12 @@ public class ProductController : Controller
 	/// Displays a listing of all products with their manufacturer info.
 	/// </summary>
 	/// <returns>A view containing all products.</returns>
+	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
 	public async Task<IActionResult> List ()
 	{
 		List<Product> products = await _context.Products
 			.Include(p => p.UserAccount)
 			.ToListAsync();
-
 		return View(products);
 	}
 	/// <summary>
@@ -68,9 +70,46 @@ public class ProductController : Controller
 			await _context.SaveChangesAsync();
 			return RedirectToAction(nameof(List));
 		}
-
 		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
 		return View(product);
+	}
+
+	[HttpPost]
+	[ValidateAntiForgeryToken]
+	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
+	public async Task<IActionResult> Add(AddProductViewModel model)
+	{
+		if (!ModelState.IsValid)
+		{
+			return View(model);
+		}
+
+		ApplicationUser? currentUser = await _userManager.GetUserAsync(User);
+		if (currentUser == null)
+		{
+			return Unauthorized();
+		}
+
+		UserAccount? manufacturerAccount = await _context.UserAccounts
+			.FirstOrDefaultAsync(account => account.AppUserId == currentUser.Id);
+		if (manufacturerAccount == null)
+		{
+			ModelState.AddModelError(string.Empty, "Your account profile could not be found.");
+			return View(model);
+		}
+
+		Product product = new()
+		{
+			Name = model.Title,
+			Price = model.Price,
+			StockQuantity = 0,
+			UserAccountId = manufacturerAccount.UserAccountId
+		};
+
+		_context.Products.Add(product);
+		await _context.SaveChangesAsync();
+
+		return RedirectToAction(nameof(List));
 	}
 
 	/// <summary>
@@ -78,7 +117,7 @@ public class ProductController : Controller
 	/// </summary>
 	/// <returns>The task result contains an <see cref="IActionResult"/> that
 	/// renders the all products view with a list of all products.</returns>
-	[Authorize(Roles = "Admin")]
+	[Authorize(Policy = AuthorizationPolicies.ViewAllProducts)]
 	public async Task<IActionResult> All()
 	{
 		List<Product> allProducts = await _context.Products

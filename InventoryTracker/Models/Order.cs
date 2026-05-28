@@ -17,22 +17,22 @@ public class Order
     public int OrderId { get; set; }
 
     /// <summary>
-    /// The UserAccount of the Wholesaler placing the order.
+    /// The ApplicationUser ID of the Wholesaler placing the order.
     /// </summary>
     [Required]
-    public int WholesalerId { get; set; }
+    public string WholesalerId { get; set; } = string.Empty;
 
     [ForeignKey(nameof(WholesalerId))]
-    public UserAccount? Wholesaler { get; set; }
+    public ApplicationUser? Wholesaler { get; set; }
 
     /// <summary>
-    /// The UserAccount of the Manufacturer fulfilling the order.
+    /// The ApplicationUser ID of the Manufacturer fulfilling the order.
     /// </summary>
     [Required]
-    public int ManufacturerId { get; set; }
+    public string ManufacturerId { get; set; } = string.Empty;
 
     [ForeignKey(nameof(ManufacturerId))]
-    public UserAccount? Manufacturer { get; set; }
+    public ApplicationUser? Manufacturer { get; set; }
 
     /// <summary>
     /// The Product being ordered.

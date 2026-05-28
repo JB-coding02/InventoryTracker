@@ -1,7 +1,11 @@
 using InventoryTracker.Data;
+using InventoryTracker.Authorization;
 using InventoryTracker.Models;
+using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +22,18 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(AuthorizationPolicies.ViewOrders, policy =>
+        policy.Requirements.Add(new UserRoleRequirement(UserRole.Admin, UserRole.Wholesaler)));
+
+    options.AddPolicy(AuthorizationPolicies.ViewManufacturerInventory, policy =>
+        policy.Requirements.Add(new UserRoleRequirement(UserRole.Manufacturer)));
+
+    options.AddPolicy(AuthorizationPolicies.ViewAllProducts, policy =>
+        policy.Requirements.Add(new UserRoleRequirement(UserRole.Admin)));
+});
+builder.Services.AddScoped<IAuthorizationHandler, UserRoleAuthorizationHandler>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -28,7 +44,47 @@ if (app.Environment.IsDevelopment())
 {
     using IServiceScope scope = app.Services.CreateScope();
     ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await dbContext.Database.MigrateAsync();
+    try
+    {
+        bool canConnect = await dbContext.Database.CanConnectAsync();
+        if (!canConnect)
+        {
+            await dbContext.Database.MigrateAsync();
+        }
+        else
+        {
+            DbConnection connection = dbContext.Database.GetDbConnection();
+            await connection.OpenAsync();
+
+            try
+            {
+                using DbCommand tableCountCommand = connection.CreateCommand();
+                tableCountCommand.CommandText = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
+                int tableCount = Convert.ToInt32(await tableCountCommand.ExecuteScalarAsync());
+
+                using DbCommand historyCommand = connection.CreateCommand();
+                historyCommand.CommandText = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '__EFMigrationsHistory'";
+                bool historyExists = await historyCommand.ExecuteScalarAsync() != null;
+
+                if (tableCount == 0 || historyExists)
+                {
+                    await dbContext.Database.MigrateAsync();
+                }
+                else
+                {
+                    app.Logger.LogWarning("Skipping automatic migration because tables already exist without migration history.");
+                }
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+        }
+    }
+    catch (SqlException ex) when (ex.Number == 2714)
+    {
+        app.Logger.LogWarning(ex, "Skipping automatic migration because a database object already exists.");
+    }
 }
 
 #if DEBUG 

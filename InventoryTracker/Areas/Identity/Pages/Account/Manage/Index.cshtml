@@ -1,0 +1,155 @@
+@page
+@model InventoryTracker.Areas.Identity.Pages.Account.Manage.IndexModel
+@using InventoryTracker.Models
+@{
+    ViewData["Title"] = "My Profile";
+    ViewData["ActivePage"] = "Profile";
+}
+
+<h3>@ViewData["Title"]</h3>
+
+<div class="row">
+    <div class="col-md-9">
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @Model.StatusMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @Model.ErrorMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (Model.CurrentUser == null)
+        {
+            <div class="alert alert-warning">User not found.</div>
+        }
+        else
+        {
+            <div class="card">
+                <div class="card-body">
+                    <!-- Username Row -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Username:</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="usernameDisplay">@Model.CurrentUser.UserName</div>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleUsernameEdit()">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Username Edit Form (Hidden by default) -->
+                    <div id="usernameEditForm" style="display: none;" class="row mb-3">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9">
+                            <form method="post" asp-page-handler="UpdateUsername">
+                                <div class="input-group">
+                                    <input type="text" name="NewUsername" class="form-control" value="@Model.NewUsername" />
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-secondary" onclick="toggleUsernameEdit()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Email:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            @Model.CurrentUser.Email
+                        </div>
+                    </div>
+
+                    <!-- User Role Row -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>User Role:</strong>
+                        </div>
+                        <div class="col-md-9">
+                            <form method="post" asp-page-handler="UpdateUserRole">
+                                <div class="input-group">
+                                    <select name="NewUserRole" class="form-select" @(Model.CurrentUser.UserRole == UserRole.Admin ? "disabled" : "")>
+                                        <option value="@UserRole.Manufacturer" selected="@(Model.CurrentUser.UserRole == UserRole.Manufacturer)">Manufacturer</option>
+                                        <option value="@UserRole.Wholesaler" selected="@(Model.CurrentUser.UserRole == UserRole.Wholesaler)">Wholesaler</option>
+                                        @if (Model.CurrentUser.UserRole == UserRole.Admin)
+                                        {
+                                            <option value="@UserRole.Admin" selected="selected">Admin</option>
+                                        }
+                                    </select>
+                                    @if (Model.CurrentUser.UserRole != UserRole.Admin)
+                                    {
+                                        <button type="submit" class="btn btn-primary">Update Role</button>
+                                    }
+                                </div>
+                            </form>
+                            @if (Model.CurrentUser.UserRole == UserRole.Admin)
+                            {
+                                <small class="text-muted d-block mt-2">Admin roles cannot be changed through this interface.</small>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <strong>Phone:</strong>
+                        </div>
+                        <div class="col-md-6">
+                            @(string.IsNullOrEmpty(Model.CurrentUser.PhoneNumber) ? "Not provided" : Model.CurrentUser.PhoneNumber)
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <a class="btn btn-sm btn-outline-primary" asp-area="" asp-controller="Profile" asp-action="EditProfile">Edit</a>
+                        </div>
+                    </div>
+
+                    @if (Model.CurrentUser.UserAccountProfile != null)
+                    {
+                        <hr />
+                        <h5>@(Model.CurrentUser.UserAccountProfile.AccountRole == UserRole.Manufacturer ? "Manufacturer Profile" : "Wholesaler Profile")</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <strong>Company Name:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                @Model.CurrentUser.UserAccountProfile.AccountName
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <strong>Email:</strong>
+                            </div>
+                            <div class="col-md-9">
+                                @Model.CurrentUser.UserAccountProfile.AccountEmail
+                            </div>
+                        </div>
+                    }
+
+                    <hr />
+                    <div class="form-group">
+                        <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="Index">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function toggleUsernameEdit() {
+        const display = document.getElementById('usernameDisplay');
+        const form = document.getElementById('usernameEditForm');
+        display.style.display = display.style.display === 'none' ? 'block' : 'none';
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+</script>

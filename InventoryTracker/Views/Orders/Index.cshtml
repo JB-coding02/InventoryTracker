@@ -4,11 +4,11 @@
 @{
     ViewData["Title"] = "All Orders";
     Layout = "_Layout";
-    List<UserAccount>? wholesalers = ViewData["Wholesalers"] as List<UserAccount>;
-    List<UserAccount>? manufacturers = ViewData["Manufacturers"] as List<UserAccount>;
+    List<ApplicationUser>? wholesalers = ViewData["Wholesalers"] as List<ApplicationUser>;
+    List<ApplicationUser>? manufacturers = ViewData["Manufacturers"] as List<ApplicationUser>;
     string? searchTerm = ViewData["SearchTerm"] as string;
-    int? selectedWholesalerId = ViewData["SelectedWholesalerId"] as int?;
-    int? selectedManufacturerId = ViewData["SelectedManufacturerId"] as int?;
+    string? selectedWholesalerId = ViewData["SelectedWholesalerId"] as string;
+    string? selectedManufacturerId = ViewData["SelectedManufacturerId"] as string;
 }
 
 <div class="container mt-4">
@@ -43,11 +43,11 @@
                         <option value="">-- All Wholesalers --</option>
                         @if (wholesalers != null)
                         {
-                            @foreach (UserAccount wholesaler in wholesalers)
+                            @foreach (ApplicationUser wholesaler in wholesalers)
                             {
-                                <option value="@wholesaler.UserAccountId" 
-                                        selected="@(selectedWholesalerId == wholesaler.UserAccountId)">
-                                    @wholesaler.AccountName
+                                <option value="@wholesaler.Id" 
+                                        selected="@(selectedWholesalerId == wholesaler.Id)">
+                                    @wholesaler.CompanyName
                                 </option>
                             }
                         }
@@ -61,11 +61,11 @@
                         <option value="">-- All Manufacturers --</option>
                         @if (manufacturers != null)
                         {
-                            @foreach (UserAccount manufacturer in manufacturers)
+                            @foreach (ApplicationUser manufacturer in manufacturers)
                             {
-                                <option value="@manufacturer.UserAccountId" 
-                                        selected="@(selectedManufacturerId == manufacturer.UserAccountId)">
-                                    @manufacturer.AccountName
+                                <option value="@manufacturer.Id" 
+                                        selected="@(selectedManufacturerId == manufacturer.Id)">
+                                    @manufacturer.CompanyName
                                 </option>
                             }
                         }
@@ -109,8 +109,8 @@
                         <tr>
                             <td>@order.OrderId</td>
                             <td>@order.OrderDate.ToString("MMM dd, yyyy HH:mm")</td>
-                            <td>@(order.Wholesaler?.AccountName ?? "Unknown")</td>
-                            <td>@(order.Manufacturer?.AccountName ?? "Unknown")</td>
+                            <td>@(order.Wholesaler?.CompanyName ?? "Unknown")</td>
+                            <td>@(order.Manufacturer?.CompanyName ?? "Unknown")</td>
                             <td>@(order.Product?.Name ?? "Unknown")</td>
                             <td>@order.Quantity</td>
                             <td>

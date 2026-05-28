@@ -1,35 +1,43 @@
-﻿@model InventoryTracker.Models.Product
+@model InventoryTracker.Models.AddProductViewModel
 
 <h2>Add Product</h2>
 
-<form asp-action="Add" method="post">
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Add" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
 
-    <div class="mb-3">
-        <label asp-for="StockQuantity" class="form-label"></label>
-        <input asp-for="StockQuantity" class="form-control" />
-        <span asp-validation-for="StockQuantity" class="text-danger"></span>
-    </div>
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
 
-    <div class="mb-3">
-        <label asp-for="UserAccountId" class="form-label">Manufacturer</label>
-        <select asp-for="UserAccountId" class="form-select"
-                asp-items="@(new SelectList(ViewBag.UserAccounts, "UserAccountId", "AccountName"))">
-            <option value="">-- Select Manufacturer --</option>
-        </select>
-        <span asp-validation-for="UserAccountId" class="text-danger"></span>
-    </div>
+            @* Future product fields can be enabled here without changing the current form contract.
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            </div>
 
-    <button type="submit" class="btn btn-primary">Add Product</button>
-    <a asp-action="List" class="btn btn-secondary">Cancel</a>
-</form>
+            <div class="mb-3">
+                <label asp-for="Sku" class="form-label"></label>
+                <input asp-for="Sku" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" />
+            </div>
+            *@
+
+            <button type="submit" class="btn btn-success">Add</button>
+            <a asp-action="List" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

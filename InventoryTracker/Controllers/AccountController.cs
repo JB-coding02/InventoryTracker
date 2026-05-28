@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventoryTracker.Controllers;
 
+/// <summary>
+/// Manages user authentication operations including login, registration, and logout.
+/// This controller handles the registration of new manufacturer and wholesaler accounts,
+/// user authentication, and account creation in the system.
+/// </summary>
 [AllowAnonymous]
 public class AccountController (
 	UserManager<ApplicationUser> userManager,
@@ -154,7 +159,8 @@ public class AccountController (
         {
             UserName = model.Email,
             Email = model.Email,
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            CompanyName = model.CompanyName
         };
 
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);

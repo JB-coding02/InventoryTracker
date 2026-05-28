@@ -12,8 +12,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 10,
             OrderDate = DateTime.Now,
@@ -31,8 +31,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 0,
             OrderDate = DateTime.Now,
@@ -50,8 +50,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = -5,
             OrderDate = DateTime.Now,
@@ -69,8 +69,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 10,
             OrderDate = DateTime.Now,
@@ -88,8 +88,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 10,
             OrderDate = DateTime.Now,
@@ -107,8 +107,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 10,
             OrderDate = DateTime.Now.AddDays(-5),
@@ -126,8 +126,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 10,
             OrderDate = DateTime.Now.AddDays(5),
@@ -145,8 +145,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 1000000,
             OrderDate = DateTime.Now,
@@ -164,8 +164,8 @@ public class OrderValidationTests
         Order order = new Order
         {
             OrderId = 1,
-            WholesalerId = 1,
-            ManufacturerId = 2,
+            WholesalerId = "user-1",
+            ManufacturerId = "user-2",
             ProductId = 1,
             Quantity = 10,
             OrderDate = DateTime.Now,
