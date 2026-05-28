@@ -6,6 +6,24 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+        @if (User.IsInRole(nameof(UserRole.Manufacturer)))
+        {
+            <li class="nav-item">
+                <p class="fw-bolder" style="color: indianred; margin-top: 9px; margin-right: 10px">Manufacturer</p>
+            </li>
+        }
+        else if (User.IsInRole(nameof(UserRole.Wholesaler)))
+        {
+            <li class="nav-item">
+                <p class="fw-bolder" style="color: paleturquoise; margin-top: 9px; margin-right: 10px">Wholesaler</p>
+            </li>
+        }
+        else if (User.IsInRole(nameof(UserRole.Admin)))
+        {
+            <li class="nav-item">
+                <p class="fw-bolder" style="color: lawngreen; margin-top: 9px; margin-right: 10px">Admin</p>
+            </li>
+        }
 
     <li class="nav-item">
         <form class="form-inline"

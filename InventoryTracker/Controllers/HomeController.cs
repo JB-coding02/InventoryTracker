@@ -54,7 +54,9 @@ public class HomeController : Controller
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.AppUserId == currentUser.Id);
 
-        if (vm.IsManufacturer)
+		vm.SignedInAs = currentAccount?.AccountName ?? currentUser.UserName;
+
+		if (vm.IsManufacturer)
         {
 			// If the user is a manufacturer, load their products to display on the dashboard
 			if (currentAccount != null)
