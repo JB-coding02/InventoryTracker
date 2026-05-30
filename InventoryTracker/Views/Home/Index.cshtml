@@ -29,16 +29,18 @@
     }
 </section>
 
+<!-- SIGNED IN CONTENT -->
 @if (SignInManager.IsSignedIn(User))
 {
     <section class="py-4">
         <div class="container-xl text-start">
+            <!-- MANUFACTURER CONTENT -->
             @if (Model.IsManufacturer)
             {
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                            <h3 class="mb-0">Your Products@(string.IsNullOrWhiteSpace(Model.ManufacturerAccountName) ? string.Empty : $" — {Model.ManufacturerAccountName}")</h3>
+                            <h3 class="mb-0">Your Products</h3>
                             <a asp-controller="Product" asp-action="Add" class="btn btn-primary">Add Product</a>
                         </div>
 
@@ -48,6 +50,7 @@
                         }
                         else
                         {
+                            <!-- MANUFACTURER TABLE -->
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover align-middle mb-0">
                                     <thead class="table-dark">
@@ -74,6 +77,7 @@
                                 </table>
                             </div>
 
+                            <!-- MANUFACTURER PAGINATION -->
                             @if (Model.ManufacturerProducts.TotalPages > 1)
                             {
                                 <nav aria-label="Product pagination" class="mt-3">
@@ -96,6 +100,7 @@
             }
             else if (Model.IsWholesaler)
             {
+                <!-- WHOLESALER CONTENT -->
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h3 class="mb-3">Manufacturers with Products</h3>
@@ -106,6 +111,7 @@
                         }
                         else
                         {
+                            <!-- WHOLESALER TABLE -->
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover align-middle mb-0">
                                     <thead class="table-dark">
@@ -128,6 +134,7 @@
                                 </table>
                             </div>
 
+                            <!-- WHOLESALER PAGINATION -->
                             @if (Model.ManufacturersWithProducts.TotalPages > 1)
                             {
                                 <nav aria-label="Manufacturer pagination" class="mt-3">
