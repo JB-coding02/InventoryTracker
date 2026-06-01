@@ -6,20 +6,20 @@
 
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white">
-                <h4 class="mb-0 fw-bold">Add Product</h4>
+        <div class="card it-form-card">
+            <div class="card-header">
+                <h4>Add Product</h4>
             </div>
             <div class="card-body">
                 <form asp-action="Add" method="post">
                     <div class="mb-3">
-                        <label asp-for="Name" class="form-label fw-semibold"></label>
+                        <label asp-for="Name" class="form-label"></label>
                         <input asp-for="Name" class="form-control" placeholder="Enter product name" />
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="Price" class="form-label fw-semibold"></label>
+                        <label asp-for="Price" class="form-label"></label>
                         <div class="input-group">
                             <span class="input-group-text">$</span>
                             <input asp-for="Price" class="form-control" placeholder="0.00" />
@@ -28,13 +28,13 @@
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="StockQuantity" class="form-label fw-semibold"></label>
+                        <label asp-for="StockQuantity" class="form-label"></label>
                         <input asp-for="StockQuantity" class="form-control" placeholder="Enter quantity" />
                         <span asp-validation-for="StockQuantity" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
-                        <label asp-for="UserAccountId" class="form-label fw-semibold">Manufacturer</label>
+                        <label asp-for="UserAccountId" class="form-label">Manufacturer</label>
                         <select asp-for="UserAccountId" class="form-select"
                                 asp-items="@(new SelectList(ViewBag.Manufacturers, "UserAccountId", "AccountName"))">
                             <option value="">-- Select Manufacturer --</option>
