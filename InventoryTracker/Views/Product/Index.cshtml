@@ -1,4 +1,4 @@
-﻿@model InventoryTracker.Models.Product
+@model InventoryTracker.Models.Product
 
 @{
     Layout = "_Layout";
@@ -30,8 +30,18 @@
                     <dd class="col-sm-9">@(Model.UserAccount?.AccountName ?? "Unknown")</dd>
                 </dl>
 
-                <!--Button to be implemented later-->
-                <a asp-controller="Product" asp-action="Index" class="btn btn-secondary">Back to List</a>
+                <div class="d-flex gap-2 mt-4">
+                    <a asp-controller="Product" asp-action="@ViewBag.BackToListAction" class="btn btn-secondary">Back to List</a>
+                    
+                    @if (ViewBag.CanEditOrDelete == true)
+                    {
+                        <a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-primary">Edit</a>
+                        
+                        <form asp-controller="Product" asp-action="Delete" asp-route-id="@Model.ProductId" method="post" onsubmit="return confirm('Are you sure you want to delete this product?');" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    }
+                </div>
             </div>
         </div>
     }

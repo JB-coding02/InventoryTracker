@@ -4,4 +4,6 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="InventoryTracker/InventoryTracker.csproj" />
+  <Project Path="InventoryTracker.Tests/InventoryTracker.Tests.csproj" />
 </Solution>
+

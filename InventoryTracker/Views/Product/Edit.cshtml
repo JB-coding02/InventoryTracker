@@ -1,0 +1,71 @@
+@model InventoryTracker.Models.Product
+@using Microsoft.AspNetCore.Identity
+@using InventoryTracker.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Edit Product";
+    Layout = "_Layout";
+    
+    // Check if the current user is an Admin to show the Manufacturer dropdown
+    ApplicationUser? appUser = await UserManager.GetUserAsync(User);
+    bool isAdmin = appUser != null && appUser.UserRole == UserRole.Admin;
+}
+
+<div class="container mt-4">
+    <h2>Edit Product</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="ProductId" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Product Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Price" class="form-label">Price ($)</label>
+                    <input asp-for="Price" type="number" step="0.01" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StockQuantity" class="form-label">Stock Quantity</label>
+                    <input asp-for="StockQuantity" type="number" class="form-control" />
+                    <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                </div>
+
+                @if (isAdmin)
+                {
+                    <div class="mb-3">
+                        <label asp-for="UserAccountId" class="form-label">Manufacturer</label>
+                        <select asp-for="UserAccountId" class="form-select" asp-items="@(new SelectList(ViewBag.UserAccounts, "UserAccountId", "AccountName"))">
+                            <option value="">-- Select Manufacturer --</option>
+                        </select>
+                        <span asp-validation-for="UserAccountId" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="UserAccountId" />
+                }
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    @if (isAdmin)
+                    {
+                        <a asp-action="All" class="btn btn-secondary">Cancel</a>
+                    }
+                    else
+                    {
+                        <a asp-action="List" class="btn btn-secondary">Cancel</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

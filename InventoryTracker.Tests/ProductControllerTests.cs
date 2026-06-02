@@ -86,4 +86,53 @@ public class ProductControllerTests
 
         Assert.Null(product.UserAccount);
     }
+
+    [Fact]
+    public void EditGetAction_HasAuthorizeAttribute()
+    {
+        System.Reflection.MethodInfo? method = typeof(InventoryTracker.Controllers.ProductController)
+            .GetMethod("Edit", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, [typeof(int)]);
+
+        Assert.NotNull(method);
+
+        System.Reflection.CustomAttributeData? authorizeAttribute = method.CustomAttributes
+            .FirstOrDefault(attr => attr.AttributeType.Name == "AuthorizeAttribute");
+
+        Assert.NotNull(authorizeAttribute);
+    }
+
+    [Fact]
+    public void EditPostAction_HasAuthorizeAndValidateAntiForgeryTokenAttributes()
+    {
+        System.Reflection.MethodInfo? method = typeof(InventoryTracker.Controllers.ProductController)
+            .GetMethod("Edit", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, [typeof(int), typeof(Product)]);
+
+        Assert.NotNull(method);
+
+        System.Reflection.CustomAttributeData? authorizeAttribute = method.CustomAttributes
+            .FirstOrDefault(attr => attr.AttributeType.Name == "AuthorizeAttribute");
+        System.Reflection.CustomAttributeData? antiForgeryAttribute = method.CustomAttributes
+            .FirstOrDefault(attr => attr.AttributeType.Name == "ValidateAntiForgeryTokenAttribute");
+
+        Assert.NotNull(authorizeAttribute);
+        Assert.NotNull(antiForgeryAttribute);
+    }
+
+    [Fact]
+    public void DeleteAction_HasAuthorizeAndValidateAntiForgeryTokenAttributes()
+    {
+        System.Reflection.MethodInfo? method = typeof(InventoryTracker.Controllers.ProductController)
+            .GetMethod("Delete", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance, [typeof(int)]);
+
+        Assert.NotNull(method);
+
+        System.Reflection.CustomAttributeData? authorizeAttribute = method.CustomAttributes
+            .FirstOrDefault(attr => attr.AttributeType.Name == "AuthorizeAttribute");
+        System.Reflection.CustomAttributeData? antiForgeryAttribute = method.CustomAttributes
+            .FirstOrDefault(attr => attr.AttributeType.Name == "ValidateAntiForgeryTokenAttribute");
+
+        Assert.NotNull(authorizeAttribute);
+        Assert.NotNull(antiForgeryAttribute);
+    }
 }
+

@@ -1,4 +1,4 @@
-﻿using InventoryTracker.Data;
+using InventoryTracker.Data;
 using InventoryTracker.Authorization;
 using InventoryTracker.Models;
 using Microsoft.AspNetCore.Identity;
@@ -28,12 +28,41 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 	public async Task<IActionResult> Index (int id)
 	{
 		Product? product = await _context.Products
+			.AsNoTracking()
 			.Include(p => p.UserAccount) // Eager load the related UserAccount data
 			.FirstOrDefaultAsync(p => p.ProductId == id);
 
 		if (product == null) { 
 			return NotFound();
 		}
+
+		ApplicationUser? currentUser = await _userManager.GetUserAsync(User);
+		string backToListAction = nameof(List);
+		bool canEditOrDelete = false;
+
+		if (currentUser != null)
+		{
+			if (currentUser.UserRole == UserRole.Admin)
+			{
+				backToListAction = nameof(All);
+				canEditOrDelete = true;
+			}
+			else if (currentUser.UserRole == UserRole.Manufacturer)
+			{
+				backToListAction = nameof(List);
+				UserAccount? manufacturerAccount = await _context.UserAccounts
+					.AsNoTracking()
+					.FirstOrDefaultAsync(ua => ua.AppUserId == currentUser.Id);
+				if (manufacturerAccount != null && product.UserAccountId == manufacturerAccount.UserAccountId)
+				{
+					canEditOrDelete = true;
+				}
+			}
+		}
+
+		ViewBag.BackToListAction = backToListAction;
+		ViewBag.CanEditOrDelete = canEditOrDelete;
+
 		return View(product);
 	}
 	/// <summary>
@@ -44,6 +73,7 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 	public async Task<IActionResult> List ()
 	{
 		List<Product> products = await _context.Products
+			.AsNoTracking()
 			.Include(p => p.UserAccount)
 			.ToListAsync();
 		return View(products);
@@ -52,26 +82,10 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 	/// Displays the form to add a new product.
 	/// </summary>
 	[HttpGet]
-	public async Task<IActionResult> Add ()
+	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
+	public IActionResult Add ()
 	{
-		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
 		return View();
-	}
-
-	/// <summary>
-	/// Handles the form submission to add a new product.
-	/// </summary>
-	[HttpPost]
-	public async Task<IActionResult> Add (Product product)
-	{
-		if (ModelState.IsValid)
-		{
-			_context.Products.Add(product);
-			await _context.SaveChangesAsync();
-			return RedirectToAction(nameof(List));
-		}
-		ViewBag.UserAccounts = await _context.UserAccounts.Where(ua => ua.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
-		return View(product);
 	}
 
 	[HttpPost]
@@ -91,6 +105,7 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 		}
 
 		UserAccount? manufacturerAccount = await _context.UserAccounts
+			.AsNoTracking()
 			.FirstOrDefaultAsync(account => account.AppUserId == currentUser.Id);
 		if (manufacturerAccount == null)
 		{
@@ -121,6 +136,7 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 	public async Task<IActionResult> All()
 	{
 		List<Product> allProducts = await _context.Products
+			.AsNoTracking()
 			.Include(p => p.UserAccount) // Eager load the related UserAccount data
 			.OrderBy(p => p.Name)
 			.ToListAsync();
@@ -129,5 +145,181 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 		return View(allProducts);
 	}
 
+	/// <summary>
+	/// Displays the edit product form pre-populated with the current product's information.
+	/// </summary>
+	[HttpGet]
+	[Authorize]
+	public async Task<IActionResult> Edit (int id)
+	{
+		ApplicationUser? currentUser = await _userManager.GetUserAsync(User);
+		if (currentUser == null)
+		{
+			return Unauthorized();
+		}
 
+		if (currentUser.UserRole != UserRole.Admin && currentUser.UserRole != UserRole.Manufacturer)
+		{
+			return Forbid();
+		}
+
+		Product? product = await _context.Products
+			.AsNoTracking()
+			.Include(p => p.UserAccount)
+			.FirstOrDefaultAsync(p => p.ProductId == id);
+		if (product == null)
+		{
+			return NotFound();
+		}
+
+		if (currentUser.UserRole == UserRole.Manufacturer)
+		{
+			UserAccount? manufacturerAccount = await _context.UserAccounts
+				.AsNoTracking()
+				.FirstOrDefaultAsync(ua => ua.AppUserId == currentUser.Id);
+			if (manufacturerAccount == null || product.UserAccountId != manufacturerAccount.UserAccountId)
+			{
+				return Forbid();
+			}
+		}
+		else if (currentUser.UserRole == UserRole.Admin)
+		{
+			ViewBag.UserAccounts = await _context.UserAccounts
+				.AsNoTracking()
+				.Where(ua => ua.AccountRole == UserRole.Manufacturer)
+				.OrderBy(ua => ua.AccountName)
+				.ToListAsync();
+		}
+
+		return View(product);
+	}
+
+	/// <summary>
+	/// Handles form submission to save changes to an existing product.
+	/// </summary>
+	[HttpPost]
+	[ValidateAntiForgeryToken]
+	[Authorize]
+	public async Task<IActionResult> Edit (int id, Product product)
+	{
+		if (id != product.ProductId)
+		{
+			return NotFound();
+		}
+
+		ApplicationUser? currentUser = await _userManager.GetUserAsync(User);
+		if (currentUser == null)
+		{
+			return Unauthorized();
+		}
+
+		if (currentUser.UserRole != UserRole.Admin && currentUser.UserRole != UserRole.Manufacturer)
+		{
+			return Forbid();
+		}
+
+		Product? existingProduct = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.ProductId == id);
+		if (existingProduct == null)
+		{
+			return NotFound();
+		}
+
+		if (currentUser.UserRole == UserRole.Manufacturer)
+		{
+			UserAccount? manufacturerAccount = await _context.UserAccounts
+				.AsNoTracking()
+				.FirstOrDefaultAsync(ua => ua.AppUserId == currentUser.Id);
+			if (manufacturerAccount == null || existingProduct.UserAccountId != manufacturerAccount.UserAccountId)
+			{
+				return Forbid();
+			}
+			
+			// A manufacturer cannot reassign a product to a different manufacturer
+			product.UserAccountId = existingProduct.UserAccountId;
+		}
+
+		if (ModelState.IsValid)
+		{
+			try
+			{
+				_context.Update(product);
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!await ProductExists(product.ProductId))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+
+			return currentUser.UserRole == UserRole.Admin 
+				? RedirectToAction(nameof(All)) 
+				: RedirectToAction(nameof(List));
+		}
+
+		if (currentUser.UserRole == UserRole.Admin)
+		{
+			ViewBag.UserAccounts = await _context.UserAccounts
+				.AsNoTracking()
+				.Where(ua => ua.AccountRole == UserRole.Manufacturer)
+				.OrderBy(ua => ua.AccountName)
+				.ToListAsync();
+		}
+
+		return View(product);
+	}
+
+	/// <summary>
+	/// Handles deletion of a product.
+	/// </summary>
+	[HttpPost]
+	[ValidateAntiForgeryToken]
+	[Authorize]
+	public async Task<IActionResult> Delete (int id)
+	{
+		ApplicationUser? currentUser = await _userManager.GetUserAsync(User);
+		if (currentUser == null)
+		{
+			return Unauthorized();
+		}
+
+		if (currentUser.UserRole != UserRole.Admin && currentUser.UserRole != UserRole.Manufacturer)
+		{
+			return Forbid();
+		}
+
+		Product? product = await _context.Products.FindAsync(id);
+		if (product == null)
+		{
+			return NotFound();
+		}
+
+		if (currentUser.UserRole == UserRole.Manufacturer)
+		{
+			UserAccount? manufacturerAccount = await _context.UserAccounts
+				.AsNoTracking()
+				.FirstOrDefaultAsync(ua => ua.AppUserId == currentUser.Id);
+			if (manufacturerAccount == null || product.UserAccountId != manufacturerAccount.UserAccountId)
+			{
+				return Forbid();
+			}
+		}
+
+		_context.Products.Remove(product);
+		await _context.SaveChangesAsync();
+
+		return currentUser.UserRole == UserRole.Admin 
+			? RedirectToAction(nameof(All)) 
+			: RedirectToAction(nameof(List));
+	}
+
+	private async Task<bool> ProductExists(int id)
+	{
+		return await _context.Products.AnyAsync(e => e.ProductId == id);
+	}
 }
