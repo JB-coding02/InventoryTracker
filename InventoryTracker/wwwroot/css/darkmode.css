@@ -1,0 +1,139 @@
+/* Dark Mode Styles */
+
+body.dark-mode {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+body.dark-mode .navbar {
+    background-color: #2d2d2d !important;
+    border-bottom: 1px solid #444;
+}
+
+body.dark-mode .nav-link {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .nav-link:hover {
+    color: #ffffff !important;
+}
+
+body.dark-mode .card {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+    background-color: #3d3d3d;
+    border-color: #777;
+    color: #e0e0e0;
+}
+
+body.dark-mode .table {
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-mode .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #2d2d2d;
+}
+
+body.dark-mode .table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #353535;
+}
+
+body.dark-mode .btn-outline-primary {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+body.dark-mode .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #ffffff;
+}
+
+body.dark-mode .modal-content {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .modal-header {
+    border-bottom-color: #444;
+}
+
+body.dark-mode .modal-footer {
+    border-top-color: #444;
+}
+
+body.dark-mode .list-group-item {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .list-group-item.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+body.dark-mode a {
+    color: #6db3f2;
+}
+
+body.dark-mode a:hover {
+    color: #9ecaff;
+}
+
+/* Dark Mode Toggle Button Styles */
+.dark-mode-toggle {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Light mode: Dark gray button with white text */
+.dark-mode-toggle {
+    background-color: #495057;
+    color: #ffffff;
+}
+
+.dark-mode-toggle:hover {
+    background-color: #5a6268;
+    color: #ffffff;
+}
+
+/* Dark mode: Light gray button with black text */
+body.dark-mode .dark-mode-toggle {
+    background-color: #c0c0c0;
+    color: #000000;
+}
+
+body.dark-mode .dark-mode-toggle:hover {
+    background-color: #d3d3d3;
+    color: #000000;
+}
+
+/* Ensure text remains visible */
+.dark-mode-toggle:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+body.dark-mode .dark-mode-toggle:focus {
+    outline: 2px solid #6db3f2;
+    outline-offset: 2px;
+}
