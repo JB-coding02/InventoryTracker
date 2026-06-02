@@ -160,7 +160,8 @@ public class AccountController (
             UserName = model.Email,
             Email = model.Email,
             EmailConfirmed = true,
-            CompanyName = model.CompanyName
+            CompanyName = model.CompanyName,
+            UserRole = model.AccountType == "Manufacturer" ? UserRole.Manufacturer : UserRole.Wholesaler
         };
 
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);

@@ -18,6 +18,22 @@
         </div>
     </div>
 
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <!-- Search and Filter Form -->
     <div class="card mb-4">
         <div class="card-header bg-light">
@@ -99,6 +115,7 @@
                         <th>Wholesaler (Buyer)</th>
                         <th>Manufacturer (Seller)</th>
                         <th>Product</th>
+                        <th>Price</th>
                         <th>Quantity</th>
                         <th>Status</th>
                     </tr>
@@ -112,6 +129,7 @@
                             <td>@(order.Wholesaler?.CompanyName ?? "Unknown")</td>
                             <td>@(order.Manufacturer?.CompanyName ?? "Unknown")</td>
                             <td>@(order.Product?.Name ?? "Unknown")</td>
+                            <td>@(order.Product?.Price.ToString("C") ?? "N/A")</td>
                             <td>@order.Quantity</td>
                             <td>
                                 <span class="badge bg-@GetStatusBadgeColor(order.Status)">

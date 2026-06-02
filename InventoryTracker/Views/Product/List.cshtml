@@ -1,11 +1,39 @@
 ﻿@model List<InventoryTracker.Models.Product>
+@using Microsoft.AspNetCore.Identity
+@using InventoryTracker.Models
+@inject UserManager<ApplicationUser> UserManager
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Products</h2>
-    <a asp-controller="Product" asp-action="Add" class="btn btn-success" style="background-color: #0f5132; border-color: #0f5132;">
-        Add Product
-    </a>
+
+    @{
+        ApplicationUser? currentUser = await UserManager.GetUserAsync(User);
+    }
+
+    @if (currentUser?.UserRole != UserRole.Wholesaler)
+    {
+        <a asp-controller="Product" asp-action="Add" class="btn btn-success">
+            Add Product
+        </a>
+    }
 </div>
+
+<!-- Success/Error Messages -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
 @if (Model.Count == 0)
 {
@@ -13,16 +41,19 @@
 }
 else
 {
-    <table class="table">
+    <table class="table table-striped table-centered">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Manufacturer</th>
-                <th>Price</th>
+                <th>Unit Price</th>
                 <th>Stock</th>
-                <th></th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Actions</th>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var product in Model)
             {
@@ -31,13 +62,100 @@ else
                     <td>@product.UserAccount?.AccountName</td>
                     <td>@product.Price.ToString("C")</td>
                     <td>@product.StockQuantity</td>
+
                     <td>
-                        <a asp-controller="Product" asp-action="Index" asp-route-id="@product.ProductId">
-                            View Details
-                        </a>
+                        @if (currentUser?.UserRole == UserRole.Wholesaler)
+                        {
+                            <input type="number"
+                                   class="form-control quantity-input"
+                                   min="1"
+                                   value="1"
+                                   data-product-id="@product.ProductId"
+                                   data-price="@product.Price"
+                                   onchange="updateTotalPrice(this)"
+                                   oninput="updateTotalPrice(this)"
+                                   style="width: 70px;" />
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (currentUser?.UserRole == UserRole.Wholesaler)
+                        {
+                            <span class="total-price-@product.ProductId">
+                                @product.Price.ToString("C")
+                            </span>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+
+                    <td>
+                        <div class="btn-group" role="group">
+
+                            @if (currentUser?.UserRole != UserRole.Wholesaler)
+                            {
+                                <a asp-controller="Product"
+                                   asp-action="Index"
+                                   asp-route-id="@product.ProductId"
+                                   class="btn btn-primary btn-sm">
+                                    View Details
+                                </a>
+                            }
+
+                            @if (currentUser?.UserRole == UserRole.Wholesaler)
+                            {
+                                <form asp-controller="Orders"
+                                      asp-action="CreateOrder"
+                                      method="post"
+                                      class="d-inline">
+
+                                    <input type="hidden"
+                                           name="productId"
+                                           value="@product.ProductId" />
+
+                                    <input type="hidden"
+                                           class="quantity-value-@product.ProductId"
+                                           name="quantity"
+                                           value="1" />
+
+                                    <button type="submit"
+                                            class="btn btn-primary btn-sm">
+                                        Order
+                                    </button>
+                                </form>
+                            }
+
+                        </div>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+}
+
+@section Scripts {
+    <script>
+        function updateTotalPrice(input) {
+            const quantity = parseInt(input.value) || 1;
+            const price = parseFloat(input.dataset.price);
+            const productId = input.dataset.productId;
+            const totalPrice = (price * quantity).toFixed(2);
+
+            const totalPriceElement = document.querySelector(`.total-price-${productId}`);
+            if (totalPriceElement) {
+                totalPriceElement.textContent = '$' + totalPrice;
+            }
+
+            const quantityInput = document.querySelector(`.quantity-value-${productId}`);
+            if (quantityInput) {
+                quantityInput.value = quantity;
+            }
+        }
+    </script>
 }

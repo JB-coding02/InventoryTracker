@@ -27,6 +27,9 @@ builder.Services.AddAuthorization(options =>
         policy.Requirements.Add(new UserRoleRequirement(UserRole.Admin, UserRole.Wholesaler)));
 
     options.AddPolicy(AuthorizationPolicies.ViewManufacturerInventory, policy =>
+        policy.Requirements.Add(new UserRoleRequirement(UserRole.Manufacturer, UserRole.Wholesaler)));
+
+    options.AddPolicy(AuthorizationPolicies.AddProduct, policy =>
         policy.Requirements.Add(new UserRoleRequirement(UserRole.Manufacturer)));
 
     options.AddPolicy(AuthorizationPolicies.ViewAllProducts, policy =>

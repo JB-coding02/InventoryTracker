@@ -82,7 +82,7 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 	/// Displays the form to add a new product.
 	/// </summary>
 	[HttpGet]
-	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
+	[Authorize(Policy = AuthorizationPolicies.AddProduct)]
 	public IActionResult Add ()
 	{
 		return View();
@@ -90,7 +90,7 @@ public class ProductController (ApplicationDbContext context, UserManager<Applic
 
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	[Authorize(Policy = AuthorizationPolicies.ViewManufacturerInventory)]
+	[Authorize(Policy = AuthorizationPolicies.AddProduct)]
 	public async Task<IActionResult> Add(AddProductViewModel model)
 	{
 		if (!ModelState.IsValid)

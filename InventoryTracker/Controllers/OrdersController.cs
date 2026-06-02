@@ -3,6 +3,7 @@ using InventoryTracker.Authorization;
 using InventoryTracker.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryTracker.Controllers;
@@ -14,10 +15,12 @@ namespace InventoryTracker.Controllers;
 public class OrdersController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public OrdersController(ApplicationDbContext context)
+    public OrdersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     /// <summary>
@@ -87,5 +90,87 @@ public class OrdersController : Controller
         ViewData["Manufacturers"] = manufacturers;
 
         return View(filteredOrders);
+    }
+
+    /// <summary>
+    /// Creates a new order for the current wholesaler with the specified product and quantity.
+    /// </summary>
+    /// <param name="productId">The ID of the product to order.</param>
+    /// <param name="quantity">The quantity of the product to order.</param>
+    /// <returns>Redirects to the Orders Index view on success; otherwise, redirects back with error message.</returns>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize]
+    public async Task<IActionResult> CreateOrder(int productId, int quantity)
+    {
+        // Verify user is authenticated and is a wholesaler
+        ApplicationUser? currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null)
+        {
+            return Unauthorized();
+        }
+
+        if (currentUser.UserRole != UserRole.Wholesaler)
+        {
+            return Forbid();
+        }
+
+        // Validate quantity
+        if (quantity < 1)
+        {
+            TempData["ErrorMessage"] = "Quantity must be at least 1.";
+            return RedirectToAction("List", "Product");
+        }
+
+        // Get the product with its manufacturer information
+        Product? product = await _context.Products
+            .Include(p => p.UserAccount)
+            .FirstOrDefaultAsync(p => p.ProductId == productId);
+
+        if (product == null)
+        {
+            TempData["ErrorMessage"] = "Product not found.";
+            return RedirectToAction("List", "Product");
+        }
+
+        // Get the manufacturer's ApplicationUser ID
+        if (product.UserAccount == null)
+        {
+            TempData["ErrorMessage"] = "Product manufacturer not found.";
+            return RedirectToAction("List", "Product");
+        }
+
+        ApplicationUser? manufacturer = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == product.UserAccount.AppUserId);
+
+        if (manufacturer == null)
+        {
+            TempData["ErrorMessage"] = "Product manufacturer user not found.";
+            return RedirectToAction("List", "Product");
+        }
+
+        // Create the order
+        Order order = new()
+        {
+            WholesalerId = currentUser.Id,
+            ManufacturerId = manufacturer.Id,
+            ProductId = productId,
+            Quantity = quantity,
+            OrderDate = DateTime.Now,
+            Status = "Pending"
+        };
+
+        try
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Order created successfully!";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessage"] = $"Error creating order: {ex.Message}";
+        }
+
+        return RedirectToAction("Index");
     }
 }
