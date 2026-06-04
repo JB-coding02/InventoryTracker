@@ -1,31 +1,122 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #f4f6f9;
+    color: #2c3e50;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Navbar */
+.navbar {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
 }
+
+/* Hero section */
+.it-hero {
+    background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+    color: white;
+    padding: 80px 20px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+}
+
+    .it-hero h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .it-hero p {
+        font-size: 1.1rem;
+        opacity: 0.85;
+    }
+
+/* Cards */
+.it-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .it-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    .it-card .card-body {
+        padding: 28px;
+    }
+
+    .it-card .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a252f;
+        margin-bottom: 10px;
+    }
+
+    .it-card .card-text {
+        font-size: 0.92rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+/* Page headers */
+.it-page-header {
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+}
+
+    .it-page-header h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #1a252f;
+        margin: 0;
+    }
+
+/* Table */
+.it-table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+
+    .it-table thead th {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-weight: 600;
+        padding: 14px 16px;
+        background-color: #1a252f;
+        color: white;
+        border: none;
+    }
+
+    .it-table tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.15s;
+    }
+
+        .it-table tbody tr:hover

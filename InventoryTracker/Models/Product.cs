@@ -18,7 +18,7 @@ public class Product
 	/// </summary>
 	[Key]
 	[ReadOnly(true)]
-    public int ProductId { get; set; }
+	public int ProductId { get; set; }
 
 	/// <summary>
 	/// The name of the product.
@@ -33,7 +33,7 @@ public class Product
 	/// </summary>
 	[Range(0, int.MaxValue)]
 	[Column(TypeName = "decimal(18,2)")]
-    public decimal Price { get; set; }
+	public decimal Price { get; set; }
 
 	/// <summary>
 	/// The quantity of the item that is currently in stock.
@@ -48,13 +48,13 @@ public class Product
 	public string? ImagePath { get; set; }
 
 	/// <summary>
-	/// Relationship to the UserAccount that produces or sells this product.
+	/// Foreign key to the UserAccount that produces this product.
 	/// </summary>
 	[Range(1, int.MaxValue, ErrorMessage = "Manufacturer is required.")]
 	public int UserAccountId { get; set; }
 
 	/// <summary>
-	/// Navigation property to the UserAccount that produces or sells this product.
+	/// Navigation property to the UserAccount that produces this product.
 	/// </summary>
 	[ValidateNever]
 	[ForeignKey(nameof(UserAccountId))]
