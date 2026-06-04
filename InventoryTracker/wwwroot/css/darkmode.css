@@ -36,14 +36,14 @@ body.dark-mode {
     body.dark-mode .form-select {
         background-color: #3d3d3d;
         border-color: #555;
-        color: #e0e0e0;
+        color: #e0e0e0 !important;
     }
 
         body.dark-mode .form-control:focus,
         body.dark-mode .form-select:focus {
             background-color: #3d3d3d;
             border-color: #777;
-            color: #e0e0e0;
+            color: #e0e0e0 !important;
         }
 
 /* ====================================================== */
@@ -328,4 +328,29 @@ body.dark-mode table.table-centered tbody tr:nth-of-type(even) {
 body.dark-mode table.table-centered tbody tr:hover {
     background-color: #4a4a2a !important;
     color: #ffffff !important;
+}
+
+/* ====================================================== */
+/*  PLACEHOLDER TEXT — LIGHT MODE                          */
+/* ====================================================== */
+
+body:not(.dark-mode) ::placeholder {
+    color: #212529 !important; /* Bootstrap gray */
+}
+
+body:not(.dark-mode) ::-webkit-input-placeholder {
+    color: #212529 !important;
+}
+
+/* ====================================================== */
+/*  PLACEHOLDER TEXT — DARK MODE                           */
+/* ====================================================== */
+
+body.dark-mode ::placeholder {
+    color: #e0e0e0 !important; /* Light gray for dark backgrounds */
+    opacity: 1 !important;
+}
+
+body.dark-mode ::-webkit-input-placeholder {
+    color: #e0e0e0 !important;
 }

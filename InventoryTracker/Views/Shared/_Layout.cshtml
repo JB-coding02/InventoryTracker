@@ -38,22 +38,22 @@
                                 @if (appUser.UserRole == UserRole.Admin)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="All">All Products</a>
+                                        <a class="nav-link" asp-area="" asp-controller="Product" asp-action="All">All Products</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">All Orders</a>
+                                        <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">All Orders</a>
                                     </li>
                                 }
                                 @if (appUser.UserRole == UserRole.Wholesaler)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
+                                        <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
                                     </li>
                                 }
                                 @if (appUser.UserRole == UserRole.Manufacturer)
                                 {
                                     <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="List">My Inventory</a>
+                                        <a class="nav-link" asp-area="" asp-controller="Product" asp-action="List">My Inventory</a>
                                     </li>
                                 }
                             }
