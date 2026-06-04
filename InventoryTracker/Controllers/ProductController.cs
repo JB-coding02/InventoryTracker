@@ -1,6 +1,7 @@
 ﻿using InventoryTracker.Data;
 using InventoryTracker.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,12 @@ namespace InventoryTracker.Controllers;
 public class ProductController : Controller
 {
 	private readonly ApplicationDbContext _context;
+	private readonly UserManager<ApplicationUser> _userManager;
 
-	public ProductController (ApplicationDbContext context)
+ public ProductController (ApplicationDbContext context, UserManager<ApplicationUser> userManager)
 	{
 		_context = context;
+       _userManager = userManager;
 	}
 
 
@@ -50,9 +53,26 @@ public class ProductController : Controller
 	/// Displays the form to add a new product.
 	/// </summary>
 	[HttpGet]
+ [Authorize(Roles = nameof(UserRole.Manufacturer))]
 	public async Task<IActionResult> Add ()
 	{
-		ViewBag.Manufacturers = await _context.UserAccounts.Where(m => m.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
+		// Ensure the user is authenticated and has a manufacturer account before allowing access to the add product form.
+		ApplicationUser? user = await _userManager.GetUserAsync(User);
+		if (user == null)
+		{
+			return Challenge();
+		}
+
+		UserAccount? userAccount = await _context.UserAccounts
+			.AsNoTracking()
+			.FirstOrDefaultAsync(a => a.AppUserId == user.Id && a.AccountRole == UserRole.Manufacturer);
+
+		if (userAccount == null)
+		{
+			return Forbid();
+		}
+
+		ViewBag.UserAccounts = new List<UserAccount> { userAccount };
 		return View();
 	}
 
@@ -60,8 +80,29 @@ public class ProductController : Controller
 	/// Handles the form submission to add a new product.
 	/// </summary>
 	[HttpPost]
+  [Authorize(Roles = nameof(UserRole.Manufacturer))]
 	public async Task<IActionResult> Add (Product product)
 	{
+		// Ensure the user is authenticated and has a manufacturer account before allowing product creation.
+		ApplicationUser? user = await _userManager.GetUserAsync(User);
+		if (user == null)
+		{
+			return Challenge();
+		}
+
+		// Verify the user has a manufacturer account.
+		UserAccount? userAccount = await _context.UserAccounts
+			.AsNoTracking()
+			.FirstOrDefaultAsync(a => a.AppUserId == user.Id && a.AccountRole == UserRole.Manufacturer);
+
+		if (userAccount == null)
+		{
+			return Forbid();
+		}
+
+		// Force ownership to the current manufacturer account.
+		product.UserAccountId = userAccount.UserAccountId;
+
 		if (ModelState.IsValid)
 		{
 			_context.Products.Add(product);
@@ -69,7 +110,7 @@ public class ProductController : Controller
 			return RedirectToAction(nameof(List));
 		}
 
-		ViewBag.Manufacturers = await _context.UserAccounts.Where(m => m.AccountRole.Equals(UserRole.Manufacturer)).ToListAsync();
+     ViewBag.UserAccounts = new List<UserAccount> { userAccount };
 		return View(product);
 	}
 

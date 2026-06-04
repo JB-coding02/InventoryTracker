@@ -1,42 +1,160 @@
-﻿@{
+﻿@model HomeIndexViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
 
-<div class="it-hero text-center">
-    <h1>Inventory Tracker</h1>
-    <p class="mb-4">A streamlined platform for manufacturers and wholesalers to manage products and orders.</p>
-    <div class="d-flex gap-3 justify-content-center">
-        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-light btn-lg px-4">Login</a>
-        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-light btn-lg px-4">Register</a>
-    </div>
-</div>
+<section class="px-4 py-5 text-center border-bottom">
+    <h1 class="display-4 fw-bold">Inventory Tracker</h1>
 
-<div class="row g-4">
-    <div class="col-md-4">
-        <div class="card it-card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Browse Products</h5>
-                <p class="card-text">View all available products from registered manufacturers.</p>
-                <a asp-controller="Product" asp-action="List" class="btn btn-outline-primary btn-sm">View Products</a>
-            </div>
+    @if (!SignInManager.IsSignedIn(User))
+    {
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-3">
+            <!--Custom login and register pages not provided by Identity-->
+            <a asp-controller="Account"
+               asp-action="Login"
+               asp-route-returnUrl="@($"{Context.Request.Path}{Context.Request.QueryString}")"
+               class="btn btn-primary btn-lg px-4">Login</a>
+
+            <a asp-controller="Account"
+               asp-action="Register"
+               class="btn btn-outline-secondary btn-lg px-4">Register</a>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card it-card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Manufacturers</h5>
-                <p class="card-text">Register as a manufacturer to list and manage your products.</p>
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary btn-sm">Get Started</a>
-            </div>
+    }
+    else
+    {
+        <p class="lead mb-0 mt-3">Signed in as @Model.SignedInAs</p>
+    }
+</section>
+
+<!-- SIGNED IN CONTENT -->
+@if (SignInManager.IsSignedIn(User))
+{
+    <section class="py-4">
+        <div class="container-xl text-start">
+            <!-- MANUFACTURER CONTENT -->
+            @if (Model.IsManufacturer)
+            {
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                            <h3 class="mb-0">Your Products</h3>
+                            <a asp-controller="Product" asp-action="Add" class="btn btn-primary">Add Product</a>
+                        </div>
+
+                        @if (Model.ManufacturerProducts == null || Model.ManufacturerProducts.Items.Count == 0)
+                        {
+                            <div class="alert alert-info mb-0">No products found.</div>
+                        }
+                        else
+                        {
+                            <!-- MANUFACTURER TABLE -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>Stock</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var product in Model.ManufacturerProducts.Items)
+                                        {
+                                            <tr>
+                                                <td>@product.Name</td>
+                                                <td>@product.Price.ToString("C")</td>
+                                                <td>@product.StockQuantity</td>
+                                                <td class="text-end">
+                                                    <a asp-controller="Product" asp-action="Index" asp-route-id="@product.ProductId" class="btn btn-sm btn-outline-primary">View</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- MANUFACTURER PAGINATION -->
+                            @if (Model.ManufacturerProducts.TotalPages > 1)
+                            {
+                                <nav aria-label="Product pagination" class="mt-3">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item @(Model.ManufacturerProducts.HasPreviousPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturerProducts.Page - 1)" asp-route-pageSize="@Model.ManufacturerProducts.PageSize">Previous</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">Page @Model.ManufacturerProducts.Page of @Model.ManufacturerProducts.TotalPages</span>
+                                        </li>
+                                        <li class="page-item @(Model.ManufacturerProducts.HasNextPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturerProducts.Page + 1)" asp-route-pageSize="@Model.ManufacturerProducts.PageSize">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            else if (Model.IsWholesaler)
+            {
+                <!-- WHOLESALER CONTENT -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="mb-3">Manufacturers with Products</h3>
+
+                        @if (Model.ManufacturersWithProducts == null || Model.ManufacturersWithProducts.Items.Count == 0)
+                        {
+                            <div class="alert alert-info mb-0">No manufacturers with products found.</div>
+                        }
+                        else
+                        {
+                            <!-- WHOLESALER TABLE -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Manufacturer</th>
+                                            <th>Email</th>
+                                            <th>Products</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var m in Model.ManufacturersWithProducts.Items)
+                                        {
+                                            <tr>
+                                                <td>@m.AccountName</td>
+                                                <td>@m.AccountEmail</td>
+                                                <td>@m.ProductCount</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- WHOLESALER PAGINATION -->
+                            @if (Model.ManufacturersWithProducts.TotalPages > 1)
+                            {
+                                <nav aria-label="Manufacturer pagination" class="mt-3">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item @(Model.ManufacturersWithProducts.HasPreviousPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturersWithProducts.Page - 1)" asp-route-pageSize="@Model.ManufacturersWithProducts.PageSize">Previous</a>
+                                        </li>
+                                        <li class="page-item disabled">
+                                            <span class="page-link">Page @Model.ManufacturersWithProducts.Page of @Model.ManufacturersWithProducts.TotalPages</span>
+                                        </li>
+                                        <li class="page-item @(Model.ManufacturersWithProducts.HasNextPage ? string.Empty : "disabled")">
+                                            <a class="page-link" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.ManufacturersWithProducts.Page + 1)" asp-route-pageSize="@Model.ManufacturersWithProducts.PageSize">Next</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            }
+                        }
+                    </div>
+                </div>
+            }
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card it-card h-100">
-            <div class="card-body">
-                <h5 class="card-title">Wholesalers</h5>
-                <p class="card-text">Register as a wholesaler to browse and order products.</p>
-                <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary btn-sm">Get Started</a>
-            </div>
-        </div>
-    </div>
-</div>
+    </section>
+}

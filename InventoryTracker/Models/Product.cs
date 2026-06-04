@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace InventoryTracker.Models;
 
@@ -49,12 +50,13 @@ public class Product
 	/// <summary>
 	/// Foreign key to the UserAccount that produces this product.
 	/// </summary>
-	[Required]
+	[Range(1, int.MaxValue, ErrorMessage = "Manufacturer is required.")]
 	public int UserAccountId { get; set; }
 
 	/// <summary>
 	/// Navigation property to the UserAccount that produces this product.
 	/// </summary>
+	[ValidateNever]
 	[ForeignKey(nameof(UserAccountId))]
 	public UserAccount? UserAccount { get; set; }
 }
